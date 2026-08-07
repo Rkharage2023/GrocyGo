@@ -1,0 +1,45 @@
+# Dependencies
+node_modules/
+
+# Environment Variables
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Build Files
+dist/
+build/
+
+# Coverage
+coverage/
+
+# Temporary Files
+temp/
+tmp/
+
+# Sequelize
+*.sqlite
+
+# Uploads
+server/uploads/
+
+# React
+client/dist/
+
+# Misc
+*.swp
+*.swo
