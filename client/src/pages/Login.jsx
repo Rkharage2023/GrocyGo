@@ -46,6 +46,9 @@ function Login() {
       const res = await sendOtp(formData.mobile);
       if (res.success) {
         setIsOtpSent(true);
+        if (res.otp) {
+          setOtp(res.otp);
+        }
       } else {
         setError(res.message || "Failed to send OTP. Please try again.");
       }
@@ -63,6 +66,9 @@ function Login() {
       const res = await sendOtp(formData.mobile);
       if (res.success) {
         setError(""); // Clear error on successful resend
+        if (res.otp) {
+          setOtp(res.otp);
+        }
       } else {
         setError(res.message || "Failed to send OTP. Please try again.");
       }
@@ -224,6 +230,14 @@ function Login() {
                 <div className="mt-5 flex items-center gap-3 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
                   <AlertCircle size={18} className="shrink-0" />
                   {error}
+                </div>
+              )}
+
+              {/* Demo OTP Auto-fill Banner */}
+              {isOtpSent && (
+                <div className="mt-4 p-3.5 bg-emerald-50 text-emerald-800 text-sm rounded-xl border border-emerald-200 flex items-center justify-between shadow-sm">
+                  <span>📱 Demo OTP: <strong className="font-mono text-base font-bold text-emerald-900 ml-1">{otp || "Generating..."}</strong></span>
+                  <span className="text-xs bg-emerald-200 text-emerald-900 font-semibold px-2.5 py-1 rounded-full">Auto-filled</span>
                 </div>
               )}
 

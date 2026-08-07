@@ -237,6 +237,7 @@ const sendOtp = async (mobile) => {
 
   return {
     message: "OTP sent successfully",
+    otp,
   };
 };
 
