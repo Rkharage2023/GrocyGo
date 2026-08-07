@@ -326,13 +326,24 @@ const verifyOtp = async ({ mobile, otp, name, password }) => {
           message: "Password is required for Admin login",
         };
       }
-      let isMatch = await bcrypt.compare(password, user.password).catch(() => false);
-      if (!isMatch && user.password === password) {
-        isMatch = true;
-        // Auto-upgrade plain text password in DB to bcrypt hash
+      
+      let isMatch = false;
+
+      if (!user.password) {
+        // If Admin user has no password set in DB, set & save this password
         user.password = await bcrypt.hash(password, 10);
         await user.save();
+        isMatch = true;
+      } else {
+        isMatch = await bcrypt.compare(password, user.password).catch(() => false);
+        if (!isMatch && user.password === password) {
+          isMatch = true;
+          // Auto-upgrade plain text password in DB to bcrypt hash
+          user.password = await bcrypt.hash(password, 10);
+          await user.save();
+        }
       }
+
       if (!isMatch) {
         throw new AppError("Invalid password", 401);
       }
