@@ -318,7 +318,7 @@ const verifyOtp = async ({ mobile, otp, name, password }) => {
     });
     isNewUser = true;
   } else {
-    // If Admin, verify password is correct
+    // If Admin, verify password against database
     if (user.role === "ADMIN") {
       if (!password) {
         return {
@@ -326,34 +326,20 @@ const verifyOtp = async ({ mobile, otp, name, password }) => {
           message: "Password is required for Admin login",
         };
       }
-      
-      const cleanPassword = (password || "").trim();
-      const dbPassword = user.password ? user.password.trim() : null;
-      let isMatch = false;
 
-      if (!dbPassword) {
-        // If Admin user has no password set in DB, set & save this password
+      const cleanPassword = (password || "").trim();
+      let isMatch = await bcrypt.compare(cleanPassword, user.password).catch(() => false);
+
+      // Support plain text if password in database was inserted manually without bcrypt
+      if (!isMatch && user.password && user.password.trim() === cleanPassword) {
+        isMatch = true;
+        // Auto-upgrade plain text password in database to bcrypt hash
         user.password = await bcrypt.hash(cleanPassword, 10);
         await user.save();
-        isMatch = true;
-      } else {
-        isMatch = await bcrypt.compare(cleanPassword, dbPassword).catch(() => false);
-        if (!isMatch && (dbPassword === cleanPassword || user.password === cleanPassword)) {
-          isMatch = true;
-          // Auto-upgrade plain text password in DB to bcrypt hash
-          user.password = await bcrypt.hash(cleanPassword, 10);
-          await user.save();
-        }
-        // Fallback check for standard admin passwords
-        if (!isMatch && ["123456", "admin", "admin123", "manager"].includes(cleanPassword)) {
-          isMatch = true;
-          user.password = await bcrypt.hash(cleanPassword, 10);
-          await user.save();
-        }
       }
 
       if (!isMatch) {
-        throw new AppError("Invalid password. Default admin password is 123456", 401);
+        throw new AppError("Invalid password", 401);
       }
     }
   }
