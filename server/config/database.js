@@ -1,23 +1,29 @@
 const { Sequelize } = require("sequelize");
 require("dotenv").config();
 
-const sequelize = process.env.DATABASE_URL
+const isUrlValid =
+  process.env.DATABASE_URL &&
+  (process.env.DATABASE_URL.startsWith("mysql://") ||
+    process.env.DATABASE_URL.startsWith("mysql2://") ||
+    process.env.DATABASE_URL.startsWith("mariadb://"));
+
+const sequelize = isUrlValid
   ? new Sequelize(process.env.DATABASE_URL, {
       dialect: "mysql",
       logging: false,
       dialectOptions: {
-        charset: "utf8mb4"
+        charset: "utf8mb4",
       },
       define: {
         charset: "utf8mb4",
-        collate: "utf8mb4_unicode_ci"
+        collate: "utf8mb4_unicode_ci",
       },
       pool: {
         max: 50,
         min: 5,
         acquire: 30000,
-        idle: 10000
-      }
+        idle: 10000,
+      },
     })
   : new Sequelize(
       process.env.DB_NAME,
@@ -29,18 +35,18 @@ const sequelize = process.env.DATABASE_URL
         dialect: "mysql",
         logging: false,
         dialectOptions: {
-          charset: "utf8mb4"
+          charset: "utf8mb4",
         },
         define: {
           charset: "utf8mb4",
-          collate: "utf8mb4_unicode_ci"
+          collate: "utf8mb4_unicode_ci",
         },
         pool: {
           max: 50,
           min: 5,
           acquire: 30000,
-          idle: 10000
-        }
+          idle: 10000,
+        },
       }
     );
 

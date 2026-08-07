@@ -1,5 +1,11 @@
 require("dotenv").config();
 
+const isUrlValid =
+  process.env.DATABASE_URL &&
+  (process.env.DATABASE_URL.startsWith("mysql://") ||
+    process.env.DATABASE_URL.startsWith("mysql2://") ||
+    process.env.DATABASE_URL.startsWith("mariadb://"));
+
 module.exports = {
   development: {
     username: process.env.DB_USER,
@@ -20,7 +26,7 @@ module.exports = {
     },
 
     migrationStorage: "sequelize",
-    seederStorage: "sequelize",   // <-- Add this
+    seederStorage: "sequelize",
   },
 
   test: {
@@ -35,7 +41,7 @@ module.exports = {
     seederStorage: "sequelize",
   },
 
-  production: process.env.DATABASE_URL
+  production: isUrlValid
     ? {
         use_env_variable: "DATABASE_URL",
         dialect: "mysql",
