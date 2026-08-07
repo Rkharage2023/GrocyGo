@@ -328,14 +328,23 @@ const verifyOtp = async ({ mobile, otp, name, password }) => {
       }
 
       const cleanPassword = (password || "").trim();
-      let isMatch = await bcrypt.compare(cleanPassword, user.password).catch(() => false);
+      let isMatch = false;
 
-      // Support plain text if password in database was inserted manually without bcrypt
-      if (!isMatch && user.password && user.password.trim() === cleanPassword) {
-        isMatch = true;
-        // Auto-upgrade plain text password in database to bcrypt hash
+      // If user.password is NULL or empty in DB, set & save this password in MySQL
+      if (!user.password || user.password.trim() === "") {
         user.password = await bcrypt.hash(cleanPassword, 10);
         await user.save();
+        isMatch = true;
+      } else {
+        // Compare with bcrypt hash
+        isMatch = await bcrypt.compare(cleanPassword, user.password).catch(() => false);
+
+        // Support plain text if password in database was inserted manually without bcrypt
+        if (!isMatch && user.password && user.password.trim() === cleanPassword) {
+          isMatch = true;
+          user.password = await bcrypt.hash(cleanPassword, 10);
+          await user.save();
+        }
       }
 
       if (!isMatch) {
