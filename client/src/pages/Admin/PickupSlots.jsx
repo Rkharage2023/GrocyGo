@@ -5,7 +5,6 @@ import {
   FaSave, 
   FaCheckCircle, 
   FaExclamationTriangle, 
-  FaUsers, 
   FaShoppingBag, 
   FaUser, 
   FaPhone, 
@@ -203,6 +202,9 @@ function AdminPickupSlots() {
     hr = hr ? hr : 12;
     return `${hr.toString().padStart(2, "0")}:${minute} ${ampm}`;
   };
+
+  const todayStr = new Date().toISOString().split("T")[0];
+  const nowTimeStr = new Date().toTimeString().split(" ")[0];
 
   const filteredSlots = slots.filter((slot) => slot.date === selectedDate);
 
@@ -487,13 +489,19 @@ function AdminPickupSlots() {
                     <tbody className="divide-y divide-gray-50">
                       {sortedSlots.map((slot) => {
                         const isFull = slot.bookedCount >= slot.maxCapacity;
+                        const isPast = slot.date === todayStr && slot.endTime < nowTimeStr;
                         return (
-                          <tr key={slot.id} className="hover:bg-gray-50/40 transition-colors">
-                            <td className="py-3 pl-2 text-gray-700 font-medium flex items-center gap-1.5">
+                          <tr key={slot.id} className={`hover:bg-gray-50/40 transition-colors ${isPast ? "opacity-60 bg-gray-50/30" : ""}`}>
+                            <td className="py-3 pl-2 text-gray-700 font-medium flex items-center gap-1.5 flex-wrap">
                               <FaClock className="text-gray-300 text-xs" />
                               <span>
                                 {formatTime12h(slot.startTime)} - {formatTime12h(slot.endTime)}
                               </span>
+                              {isPast && (
+                                <span className="text-[9px] bg-gray-200 text-gray-600 font-bold px-1.5 py-0.5 rounded">
+                                  Past
+                                </span>
+                              )}
                             </td>
                             <td className="py-3 text-gray-700">
                               <div className="flex items-center gap-1.5">

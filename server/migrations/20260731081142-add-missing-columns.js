@@ -18,7 +18,7 @@ module.exports = {
 
     // Add paymentMethod to orders table
     await queryInterface.addColumn("orders", "paymentMethod", {
-      type: Sequelize.ENUM("CASH"),
+      type: Sequelize.STRING(50),
       defaultValue: "CASH",
       allowNull: false,
     });

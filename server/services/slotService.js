@@ -150,6 +150,8 @@ const generateSlots = async (data) => {
             ? dayjs(`${currentDate.format("YYYY-MM-DD")} ${breakEndTime}`)
             : null;
 
+        const now = dayjs();
+
         while (currentTime.isBefore(closingDateTime)) {
             const slotEnd = currentTime.add(interval, "minute");
 
@@ -157,6 +159,9 @@ const generateSlots = async (data) => {
             if (slotEnd.isAfter(closingDateTime)) {
                 break;
             }
+
+            // Mark slots in the past for today as inactive
+            const isPast = currentDate.isSame(now, "day") && slotEnd.isBefore(now);
 
             // Skip slots that overlap the break
             if (
@@ -175,7 +180,7 @@ const generateSlots = async (data) => {
                 endTime: slotEnd.format("HH:mm:ss"),
                 maxCapacity,
                 bookedCount: 0,
-                isActive: true,
+                isActive: !isPast,
             });
 
             currentTime = slotEnd;
