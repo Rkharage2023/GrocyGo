@@ -32,6 +32,21 @@ const formatTime12h = (timeStr) => {
   return `${hr.toString().padStart(2, "0")}:${minute} ${ampm}`;
 };
 
+const formatDateDDMMYYYY = (dateVal) => {
+  if (!dateVal) return "";
+  const str = String(dateVal).split("T")[0];
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const [yyyy, mm, dd] = str.split("-");
+    return `${dd}-${mm}-${yyyy}`;
+  }
+  const d = new Date(dateVal);
+  if (isNaN(d.getTime())) return String(dateVal);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}-${month}-${year}`;
+};
+
 function AdminOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -110,7 +125,7 @@ function AdminOrders() {
   useEffect(() => {
     if (!billDetails) { setBillEditData(null); return; }
     const slotText = billDetails.Slot
-      ? `${new Date(billDetails.Slot.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} • ${formatTime12h(billDetails.Slot.startTime)} - ${formatTime12h(billDetails.Slot.endTime)}`
+      ? `${formatDateDDMMYYYY(billDetails.Slot.date)} • ${formatTime12h(billDetails.Slot.startTime)} - ${formatTime12h(billDetails.Slot.endTime)}`
       : "";
     const isMr = billLang === "mr";
     setBillEditData({
@@ -363,7 +378,7 @@ function AdminOrders() {
       customerName: billDetails.User?.name || "Customer",
       customerMobile: billDetails.User?.mobile || "N/A",
       pickupSlotText: billDetails.Slot
-        ? `${new Date(billDetails.Slot.date).toLocaleDateString(isMr ? "mr-IN" : "en-IN", { day: "numeric", month: "short" })} • ${formatTime12h(billDetails.Slot.startTime)} - ${formatTime12h(billDetails.Slot.endTime)}`
+        ? `${formatDateDDMMYYYY(billDetails.Slot.date)} • ${formatTime12h(billDetails.Slot.startTime)} - ${formatTime12h(billDetails.Slot.endTime)}`
         : "",
       totalAmount: parseFloat(billDetails.totalAmount || 0),
       items: (billDetails.OrderItems || []).map(item => ({
@@ -990,7 +1005,7 @@ function AdminOrders() {
                         </div>
                         {order.Slot && (
                           <span className="text-xs text-blue-600 font-semibold mt-1 flex items-center gap-1">
-                            <Clock size={12} /> {new Date(order.Slot.date).toLocaleDateString("en-IN", { day: "numeric", month: "short" })} | {formatTime12h(order.Slot.startTime)} - {formatTime12h(order.Slot.endTime)}
+                            <Clock size={12} /> {formatDateDDMMYYYY(order.Slot.date)} | {formatTime12h(order.Slot.startTime)} - {formatTime12h(order.Slot.endTime)}
                           </span>
                         )}
                         {!order.Slot && (
@@ -1373,11 +1388,7 @@ function AdminOrders() {
                           <div>
                             <p className="text-xs text-gray-400 font-semibold uppercase">Date</p>
                             <p className="font-bold text-gray-800 mt-0.5">
-                              {new Date(orderDetails.Slot.date).toLocaleDateString("en-IN", {
-                                day: "numeric",
-                                month: "long",
-                                year: "numeric"
-                              })}
+                              {formatDateDDMMYYYY(orderDetails.Slot.date)}
                             </p>
                           </div>
                           <div>

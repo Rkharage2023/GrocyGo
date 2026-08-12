@@ -95,7 +95,7 @@ function AdminPickupSlots() {
   const handleBulkDelete = async (date) => {
     setSuccessMsg(null);
     setErrorMsg(null);
-    if (!window.confirm(`Are you sure you want to permanently delete ALL slots for ${date}? Booked slots will be kept.`)) {
+    if (!window.confirm(`Are you sure you want to permanently delete ALL slots for ${formatDateDDMMYYYY(date)}? Booked slots will be kept.`)) {
       return;
     }
 
@@ -121,7 +121,7 @@ function AdminPickupSlots() {
     setSuccessMsg(null);
     setErrorMsg(null);
     const actionText = isActive ? "activate" : "deactivate";
-    if (!window.confirm(`Are you sure you want to ${actionText} ALL slots for ${date}?`)) {
+    if (!window.confirm(`Are you sure you want to ${actionText} ALL slots for ${formatDateDDMMYYYY(date)}?`)) {
       return;
     }
 
@@ -201,6 +201,21 @@ function AdminPickupSlots() {
     hr = hr % 12;
     hr = hr ? hr : 12;
     return `${hr.toString().padStart(2, "0")}:${minute} ${ampm}`;
+  };
+
+  const formatDateDDMMYYYY = (dateVal) => {
+    if (!dateVal) return "";
+    const str = String(dateVal).split("T")[0];
+    if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+      const [yyyy, mm, dd] = str.split("-");
+      return `${dd}-${mm}-${yyyy}`;
+    }
+    const d = new Date(dateVal);
+    if (isNaN(d.getTime())) return String(dateVal);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
   };
 
   const todayStr = new Date().toISOString().split("T")[0];
@@ -411,7 +426,7 @@ function AdminPickupSlots() {
                   Pickup Slots
                 </h2>
                 <p className="text-xs text-gray-400 mt-1">
-                  Scheduled slots for the selected date ({sortedSlots.length})
+                  Scheduled slots for {formatDateDDMMYYYY(selectedDate)} ({sortedSlots.length})
                 </p>
               </div>
               
@@ -424,6 +439,9 @@ function AdminPickupSlots() {
                     onChange={(e) => setSelectedDate(e.target.value)}
                     className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
                   />
+                  <span className="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-xl">
+                    {formatDateDDMMYYYY(selectedDate)}
+                  </span>
                 </div>
 
                 <button
@@ -495,7 +513,7 @@ function AdminPickupSlots() {
                             <td className="py-3 pl-2 text-gray-700 font-medium flex items-center gap-1.5 flex-wrap">
                               <FaClock className="text-gray-300 text-xs" />
                               <span>
-                                {formatTime12h(slot.startTime)} - {formatTime12h(slot.endTime)}
+                                {formatDateDDMMYYYY(slot.date)} • {formatTime12h(slot.startTime)} - {formatTime12h(slot.endTime)}
                               </span>
                               {isPast && (
                                 <span className="text-[9px] bg-gray-200 text-gray-600 font-bold px-1.5 py-0.5 rounded">
@@ -568,7 +586,7 @@ function AdminPickupSlots() {
                 <FaShoppingBag className="text-green-600" /> Booked Orders
               </h2>
               <p className="text-xs text-gray-400 mt-1">
-                Customer pickups scheduled for this date ({sortedOrders.length})
+                Customer pickups scheduled for {formatDateDDMMYYYY(selectedDate)} ({sortedOrders.length})
               </p>
             </div>
 
@@ -590,7 +608,7 @@ function AdminPickupSlots() {
                     <thead>
                       <tr className="border-b border-gray-100 text-gray-400 text-xs font-semibold uppercase tracking-wider">
                         <th className="pb-3 pl-2">Order</th>
-                        <th className="pb-3">Slot timing</th>
+                        <th className="pb-3">Slot Date & timing</th>
                         <th className="pb-3">Customer</th>
                         <th className="pb-3">Amount</th>
                         <th className="pb-3 text-center">Status</th>
@@ -604,7 +622,8 @@ function AdminPickupSlots() {
                             #{order.id}
                           </td>
                           <td className="py-3 text-gray-600 font-medium">
-                            {formatTime12h(order.Slot?.startTime)} - {formatTime12h(order.Slot?.endTime)}
+                            <div className="font-semibold text-gray-800">{formatDateDDMMYYYY(order.Slot?.date)}</div>
+                            <div className="text-xs text-gray-400">{formatTime12h(order.Slot?.startTime)} - {formatTime12h(order.Slot?.endTime)}</div>
                           </td>
                           <td className="py-3 text-gray-700">
                             <div className="flex flex-col">

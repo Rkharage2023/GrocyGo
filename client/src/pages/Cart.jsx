@@ -470,43 +470,58 @@ function Cart() {
                   </div>
                 ) : slotsError ? (
                   <p className="text-xs text-red-500">{slotsError}</p>
-                ) : availableSlots.length === 0 ? (
-                  <p className="text-xs text-orange-500 bg-orange-50 p-2.5 rounded-xl border border-orange-100">
-                    {t("noSlotsAvailable", { defaultValue: "No slots available for this date." })}
-                  </p>
-                ) : (
-                  <div className="space-y-2">
-                    <label className="text-xs text-gray-400 block font-medium">{t("availableTimes", { defaultValue: "Available Times" })}</label>
-                    <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto pr-1">
-                      {availableSlots.map((slot) => {
-                        const isSelected = selectedSlotId === slot.id;
-                        return (
-                          <button
-                            key={slot.id}
-                            type="button"
-                            onClick={() => setSelectedSlotId(slot.id)}
-                            className={`w-full text-left p-2.5 rounded-xl border text-xs transition-all flex items-center justify-between ${
-                              isSelected
-                                ? "border-green-600 bg-green-50 text-green-800 font-bold shadow-sm"
-                                : "border-gray-200 hover:border-green-400 hover:bg-green-50/30 text-gray-700"
-                            }`}
-                          >
-                            <span>
-                              {formatTime12h(slot.startTime)} - {formatTime12h(slot.endTime)}
-                            </span>
-                            <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
-                              slot.availableCapacity <= 5
-                                ? "bg-orange-50 text-orange-600 font-medium"
-                                : "bg-green-50 text-green-600"
-                            }`}>
-                              {slot.availableCapacity} {t("left", { defaultValue: "left" })}
-                            </span>
-                          </button>
-                        );
-                      })}
+                ) : (() => {
+                  const todayStr = new Date().toISOString().split("T")[0];
+                  const nowTimeStr = new Date().toTimeString().split(" ")[0];
+                  const validSlots = availableSlots.filter((slot) => {
+                    if (selectedDate === todayStr) {
+                      return slot.startTime >= nowTimeStr;
+                    }
+                    return true;
+                  });
+
+                  if (validSlots.length === 0) {
+                    return (
+                      <p className="text-xs text-orange-500 bg-orange-50 p-2.5 rounded-xl border border-orange-100">
+                        {t("noSlotsAvailable", { defaultValue: "No slots available for this date." })}
+                      </p>
+                    );
+                  }
+
+                  return (
+                    <div className="space-y-2">
+                      <label className="text-xs text-gray-400 block font-medium">{t("availableTimes", { defaultValue: "Available Times" })}</label>
+                      <div className="grid grid-cols-1 gap-2 max-h-40 overflow-y-auto pr-1">
+                        {validSlots.map((slot) => {
+                          const isSelected = selectedSlotId === slot.id;
+                          return (
+                            <button
+                              key={slot.id}
+                              type="button"
+                              onClick={() => setSelectedSlotId(slot.id)}
+                              className={`w-full text-left p-2.5 rounded-xl border text-xs transition-all flex items-center justify-between ${
+                                isSelected
+                                  ? "border-green-600 bg-green-50 text-green-800 font-bold shadow-sm"
+                                  : "border-gray-200 hover:border-green-400 hover:bg-green-50/30 text-gray-700"
+                              }`}
+                            >
+                              <span>
+                                {formatTime12h(slot.startTime)} - {formatTime12h(slot.endTime)}
+                              </span>
+                              <span className={`px-1.5 py-0.5 rounded-full text-[10px] ${
+                                slot.availableCapacity <= 5
+                                  ? "bg-orange-50 text-orange-600 font-medium"
+                                  : "bg-green-50 text-green-600"
+                              }`}>
+                                {slot.availableCapacity} {t("left", { defaultValue: "left" })}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
               </div>
 
               {checkoutError && (
