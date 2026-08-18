@@ -20,11 +20,27 @@ const verifyOtpValidation = [
     .trim()
     .notEmpty()
     .withMessage("OTP is required")
-    .isLength({ min: 4, max: 6 })
-    .withMessage("OTP must be between 4 and 6 characters"),
+    .matches(/^\d{6}$/)
+    .withMessage("OTP must be a 6-digit number"),
+];
+
+const updateProfileValidation = [
+  body("name")
+    .optional()
+    .trim()
+    .notEmpty()
+    .withMessage("Name cannot be empty")
+    .matches(/^[a-zA-Z\s.-]{2,50}$/)
+    .withMessage("Name can only contain letters, spaces, dots, and hyphens (2 to 50 characters)"),
+  body("address")
+    .optional()
+    .trim()
+    .isLength({ min: 5 })
+    .withMessage("Address must be at least 5 characters long"),
 ];
 
 module.exports = {
   sendOtpValidation,
   verifyOtpValidation,
+  updateProfileValidation,
 };

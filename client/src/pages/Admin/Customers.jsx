@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaUsers, FaPhoneAlt, FaUserCircle, FaSearch, FaShoppingBag, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
+import API from "../../services/api";
 import * as orderService from "../../services/orderService";
 
 function AdminCustomers() {
@@ -12,48 +13,47 @@ function AdminCustomers() {
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
 
   useEffect(() => {
-    const fetchCustomersFromOrders = async () => {
+    const fetchCustomersList = async () => {
       try {
         setLoading(true);
         setError(null);
         
-        // Fetch all orders
-        const res = await orderService.getAllOrdersAdmin();
-        if (res.success) {
-          const orders = res.data?.orders || [];
-          
-          // Group by user
-          const customerMap = {};
-          orders.forEach((order) => {
-            if (order.User) {
-              const u = order.User;
-              if (!customerMap[u.id]) {
-                customerMap[u.id] = {
-                  id: u.id,
-                  name: u.name,
-                  mobile: u.mobile || u.phone || "N/A",
-                  orderCount: 0,
-                  totalSpent: 0,
-                  lastOrderDate: order.createdAt,
-                  orders: [],
-                };
-              }
-              
-              customerMap[u.id].orderCount += 1;
-              if (order.status !== "CANCELLED") {
-                customerMap[u.id].totalSpent += parseFloat(order.totalAmount || 0);
-              }
-              
-              if (new Date(order.createdAt) > new Date(customerMap[u.id].lastOrderDate)) {
-                customerMap[u.id].lastOrderDate = order.createdAt;
-              }
-              customerMap[u.id].orders.push(order);
-            }
-          });
-
-          setCustomers(Object.values(customerMap));
+        // Fetch all registered customers from database API endpoint
+        const res = await API.get("/customers");
+        if (res.data?.success) {
+          setCustomers(res.data.data || []);
         } else {
-          setError(res.message || "Failed to retrieve customers list.");
+          // Fallback to order aggregation if endpoint fails
+          const orderRes = await orderService.getAllOrdersAdmin();
+          if (orderRes.success) {
+            const orders = orderRes.data?.orders || [];
+            const customerMap = {};
+            orders.forEach((order) => {
+              if (order.User) {
+                const u = order.User;
+                if (!customerMap[u.id]) {
+                  customerMap[u.id] = {
+                    id: u.id,
+                    name: u.name,
+                    mobile: u.mobile || u.phone || "N/A",
+                    orderCount: 0,
+                    totalSpent: 0,
+                    lastOrderDate: order.createdAt,
+                    orders: [],
+                  };
+                }
+                customerMap[u.id].orderCount += 1;
+                if (order.status !== "CANCELLED") {
+                  customerMap[u.id].totalSpent += parseFloat(order.totalAmount || 0);
+                }
+                if (new Date(order.createdAt) > new Date(customerMap[u.id].lastOrderDate)) {
+                  customerMap[u.id].lastOrderDate = order.createdAt;
+                }
+                customerMap[u.id].orders.push(order);
+              }
+            });
+            setCustomers(Object.values(customerMap));
+          }
         }
       } catch (err) {
         console.error("Error gathering customer list:", err);
@@ -67,7 +67,7 @@ function AdminCustomers() {
       }
     };
 
-    fetchCustomersFromOrders();
+    fetchCustomersList();
   }, []);
 
   // Filter list by search term and selected date

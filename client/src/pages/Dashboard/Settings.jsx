@@ -89,14 +89,91 @@ function Settings() {
       </div>
 
       {/* App Preferences */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-        <h2 className="text-lg font-bold text-gray-800 mb-4">{t("appPreferences", { defaultValue: "App Preferences" })}</h2>
-        <p className="text-gray-400 text-sm">
-          {t("preferencesDesc", { defaultValue: "Notification settings, theme preferences, and more will be available here soon." })}
+      <AppPreferencesBlock t={t} />
+    </div>
+  );
+}
+
+function AppPreferencesBlock({ t }) {
+  const [prefs, setPrefs] = useState(() => {
+    const saved = localStorage.getItem("grocygo_customer_prefs");
+    if (saved) {
+      try { return JSON.parse(saved); } catch {}
+    }
+    return {
+      orderSms: true,
+      promotionalEmail: true,
+      soundEffects: true,
+      compactView: false,
+    };
+  });
+
+  const [toast, setToast] = useState("");
+
+  const toggle = (key) => {
+    setPrefs((prev) => {
+      const updated = { ...prev, [key]: !prev[key] };
+      localStorage.setItem("grocygo_customer_prefs", JSON.stringify(updated));
+      return updated;
+    });
+    setToast(t("preferencesSaved", { defaultValue: "Preference updated!" }));
+    setTimeout(() => setToast(""), 2000);
+  };
+
+  return (
+    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 space-y-6">
+      {toast && (
+        <div className="fixed top-24 right-6 z-50 bg-green-600 text-white px-5 py-2.5 rounded-2xl shadow-lg font-semibold animate-bounce text-sm">
+          {toast}
+        </div>
+      )}
+
+      <div>
+        <h2 className="text-lg font-bold text-gray-800 mb-1">{t("appPreferences", { defaultValue: "App Preferences" })}</h2>
+        <p className="text-gray-500 text-sm">
+          {t("preferencesDesc", { defaultValue: "Customize notification alerts and display preferences." })}
         </p>
-        <span className="mt-4 inline-flex items-center gap-2 bg-gray-100 text-gray-500 px-4 py-2 rounded-full text-sm font-medium">
-          🚧 {t("comingSoon", { defaultValue: "More settings coming soon" })}
-        </span>
+      </div>
+
+      <div className="space-y-4">
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div>
+            <p className="font-semibold text-gray-800 text-sm">{t("orderSmsAlerts", { defaultValue: "Order SMS Alerts" })}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t("orderSmsDesc", { defaultValue: "Receive instant SMS updates for pickup slot status." })}</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={prefs.orderSms}
+            onChange={() => toggle("orderSms")}
+            className="w-5 h-5 text-green-600 rounded cursor-pointer"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div>
+            <p className="font-semibold text-gray-800 text-sm">{t("offerNotifications", { defaultValue: "Promotional Offer Alerts" })}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t("offerNotifDesc", { defaultValue: "Get notified about festive discount sales." })}</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={prefs.promotionalEmail}
+            onChange={() => toggle("promotionalEmail")}
+            className="w-5 h-5 text-green-600 rounded cursor-pointer"
+          />
+        </div>
+
+        <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div>
+            <p className="font-semibold text-gray-800 text-sm">{t("compactLayout", { defaultValue: "Compact Table View" })}</p>
+            <p className="text-xs text-gray-400 mt-0.5">{t("compactLayoutDesc", { defaultValue: "Display dense order history lists." })}</p>
+          </div>
+          <input
+            type="checkbox"
+            checked={prefs.compactView}
+            onChange={() => toggle("compactView")}
+            className="w-5 h-5 text-green-600 rounded cursor-pointer"
+          />
+        </div>
       </div>
     </div>
   );

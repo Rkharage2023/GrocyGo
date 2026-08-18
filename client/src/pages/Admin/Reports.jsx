@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import { FaChartBar, FaBoxes, FaTags, FaShoppingBag, FaDollarSign, FaCalculator } from "react-icons/fa";
+import { FaChartBar, FaBoxes, FaTags, FaShoppingBag, FaDollarSign, FaCalculator, FaDownload } from "react-icons/fa";
 import API from "../../services/api";
 
 function AdminReports() {
@@ -244,6 +244,37 @@ function AdminReports() {
   const barWidth = Math.max(Math.floor(totalBarSpace * 0.65), 5);
   const gap = totalBarSpace - barWidth;
 
+  const handleExportCSV = () => {
+    if (!reportData) return;
+    const headers = ["Metric", "Value"];
+    const rows = [
+      ["Date Range Start", startDate],
+      ["Date Range End", endDate],
+      ["Total Revenue (INR)", reportData.totalRevenue.toFixed(2)],
+      ["Total Profit (INR)", reportData.totalProfit.toFixed(2)],
+      ["Average Order Value (AOV INR)", reportData.aov.toFixed(2)],
+      ["Total Orders Placed", reportData.orderCount],
+      ["Total Catalog Products", stats.totalProducts],
+      ["Total Categories", stats.totalCategories],
+      ["Low Stock Alerts", stats.lowStock],
+      ["", ""],
+      ["Date", "Daily Revenue (INR)"],
+      ...reportData.dailySales.map(d => [d.dateLabel, d.revenue.toFixed(2)]),
+      ["", ""],
+      ["Status", "Order Count"],
+      ...Object.entries(reportData.statusDistribution).map(([status, count]) => [status, count])
+    ];
+
+    const csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `GrocyGo_Report_${startDate}_to_${endDate}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="space-y-8">
       {/* Header with period and slot date filters */}
@@ -254,6 +285,14 @@ function AdminReports() {
         </div>
 
         <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
+          {/* Export CSV Button */}
+          <button
+            onClick={handleExportCSV}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-2xl font-bold text-xs transition shadow-sm"
+          >
+            <FaDownload /> Export CSV
+          </button>
+
           {/* Date Range Filter */}
           <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-gray-200 shadow-sm overflow-x-auto max-w-full">
             <select

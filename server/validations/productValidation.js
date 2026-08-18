@@ -19,15 +19,33 @@ const createProductValidation = [
     .optional()
     .trim(),
 
+  body("name")
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage("Product name must be between 2 and 100 characters"),
+
   body("price")
     .isFloat({ gt: 0 })
-    .withMessage("Price must be greater than 0"),
+    .withMessage("Selling price must be greater than 0"),
+
+  body("purchasePrice")
+    .optional()
+    .isFloat({ min: 0 })
+    .withMessage("Purchase price cannot be negative")
+    .custom((value, { req }) => {
+      if (value !== undefined && req.body.price !== undefined && parseFloat(value) > parseFloat(req.body.price)) {
+        throw new Error("Purchase price cannot be greater than selling price");
+      }
+      return true;
+    }),
 
   body("stock")
     .isInt({ min: 0 })
-    .withMessage("Stock cannot be negative"),
+    .withMessage("Stock must be a non-negative whole integer"),
 
   body("unit")
+    .trim()
     .notEmpty()
     .withMessage("Unit is required"),
 

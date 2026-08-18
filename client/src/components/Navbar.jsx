@@ -30,9 +30,19 @@ function Navbar() {
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/admin");
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const handleLogout = () => {
     logout();
     navigate("/login");
+  };
+
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      setMobileMenu(false);
+    }
   };
 
   useEffect(() => {
@@ -67,14 +77,17 @@ function Navbar() {
           </Link>
 
           {/* Search */}
-          <div className="hidden md:flex flex-1 max-w-2xl relative">
+          <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-2xl relative">
             <Search
               size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
+              onClick={handleSearchSubmit}
             />
 
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
               placeholder={t("searchPlaceholder")}
               className="
               w-full
@@ -92,7 +105,7 @@ function Navbar() {
               transition
               "
             />
-          </div>
+          </form>
 
           {/* Right Side */}
           <div className="hidden md:flex items-center gap-4">
@@ -293,20 +306,23 @@ function Navbar() {
         {/* Mobile Menu */}
         {mobileMenu && (
           <div className="md:hidden py-4 border-t">
-            <input
-              type="text"
-              placeholder={t("searchPlaceholder")}
-              className="
-                w-full
-                bg-green-50
-                border
-                border-green-200
-                rounded-xl
-                p-3
-                mb-4
-                outline-none
-              "
-            />
+            <form onSubmit={handleSearchSubmit} className="mb-4">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder={t("searchPlaceholder")}
+                className="
+                  w-full
+                  bg-green-50
+                  border
+                  border-green-200
+                  rounded-xl
+                  p-3
+                  outline-none
+                "
+              />
+            </form>
 
             {!isLoggedIn ? (
               <div className="space-y-4">

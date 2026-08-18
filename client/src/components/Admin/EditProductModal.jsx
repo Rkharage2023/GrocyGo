@@ -176,6 +176,11 @@ function EditProductModal({ isOpen, onClose, product, onRefresh, categories }) {
       return;
     }
 
+    if (purchasePriceNum > priceNum) {
+      alert("Purchase Price cannot be greater than Selling Price");
+      return;
+    }
+
     if (isNaN(stockNum) || stockNum < 0) {
       alert("Stock must be a positive integer or 0");
       return;

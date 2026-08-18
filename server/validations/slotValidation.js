@@ -18,7 +18,13 @@ const createSlotValidation = [
     .notEmpty()
     .withMessage("End time is required")
     .matches(timeRegex)
-    .withMessage("End time must be in HH:MM or HH:MM:SS format"),
+    .withMessage("End time must be in HH:MM or HH:MM:SS format")
+    .custom((val, { req }) => {
+      if (req.body.startTime && val <= req.body.startTime) {
+        throw new Error("End time must be strictly after start time");
+      }
+      return true;
+    }),
   body("maxCapacity")
     .optional()
     .isInt({ min: 1 })

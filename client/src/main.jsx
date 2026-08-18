@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
+import { WishlistProvider } from "./context/WishlistContext";
 import { LanguageProvider } from "./context/LanguageContext";
 import "./i18n";
 
@@ -13,9 +14,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <BrowserRouter>
     <AuthProvider>
       <CartProvider>
-        <LanguageProvider>
-          <App />
-        </LanguageProvider>
+        <WishlistProvider>
+          <LanguageProvider>
+            <App />
+          </LanguageProvider>
+        </WishlistProvider>
       </CartProvider>
     </AuthProvider>
   </BrowserRouter>,

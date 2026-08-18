@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const logger = require("./utils/logger");
 
 const authRoutes = require("./routes/authRoutes");
+const customerRoutes = require("./routes/customerRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const productRoutes = require("./routes/productRoutes");
 const cartRoutes = require("./routes/cartRoutes");
@@ -14,6 +15,7 @@ const cloudinaryRoutes = require("./routes/cloudinaryRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const slotRoutes = require("./routes/slotRoutes");
 const offerRoutes = require("./routes/offerRoutes");
+const wishlistRoutes = require("./routes/wishlistRoutes");
 
 const errorMiddleware = require("./middleware/errorMiddleware");
 const localizationMiddleware = require("./middleware/localizationMiddleware");
@@ -81,6 +83,7 @@ app.get("/", (req, res) => {
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api/customers", customerRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
@@ -88,6 +91,7 @@ app.use("/api/cloudinary", cloudinaryRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/slots", slotRoutes);
 app.use("/api/offers", offerRoutes);
+app.use("/api/wishlist", wishlistRoutes);
 
 // Global Error Handler (Always Last)
 app.use(errorMiddleware);

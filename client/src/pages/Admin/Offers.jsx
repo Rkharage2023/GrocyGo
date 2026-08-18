@@ -127,6 +127,26 @@ function AdminOffers() {
   const handleOfferSubmit = async (e) => {
     e.preventDefault();
 
+    if (!title.trim()) {
+      alert("Offer Title is required");
+      return;
+    }
+
+    if (!startDate || !endDate) {
+      alert("Start Date and End Date are required");
+      return;
+    }
+
+    if (new Date(endDate) <= new Date(startDate)) {
+      alert("End Date must be strictly after Start Date");
+      return;
+    }
+
+    if (discountType === "PERCENTAGE" && (parseFloat(discountValue) <= 0 || parseFloat(discountValue) > 100)) {
+      alert("Percentage discount value must be between 1% and 100%");
+      return;
+    }
+
     const payload = {
       title,
       description: description || null,

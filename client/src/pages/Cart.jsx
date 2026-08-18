@@ -117,6 +117,11 @@ function Cart() {
       setCheckoutError("Please select a pickup slot before placing your order.");
       return;
     }
+    const chosenSlot = availableSlots.find((s) => s.id === selectedSlotId);
+    if (chosenSlot && chosenSlot.currentOrders >= chosenSlot.maxCapacity) {
+      setCheckoutError("The selected pickup slot is fully booked. Please choose another time slot.");
+      return;
+    }
     try {
       setIsCheckoutLoading(true);
       setCheckoutError(null);

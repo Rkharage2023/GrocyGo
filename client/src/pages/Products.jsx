@@ -113,8 +113,9 @@ function Products() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [searchInput, setSearchInput] = useState("");
+  const initialSearch = searchParams.get("search") || "";
+  const [search, setSearch] = useState(initialSearch);
+  const [searchInput, setSearchInput] = useState(initialSearch);
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get("categoryId") || "");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -129,6 +130,15 @@ function Products() {
   const [allProductsForSuggestions, setAllProductsForSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIndex, setActiveSuggestionIndex] = useState(-1);
+
+  useEffect(() => {
+    const urlSearch = searchParams.get("search") || "";
+    const urlCategory = searchParams.get("categoryId") || "";
+    setSearch(urlSearch);
+    setSearchInput(urlSearch);
+    setSelectedCategory(urlCategory);
+    setPage(1);
+  }, [searchParams]);
 
   const fetchAllProductsForSuggestions = async () => {
     try {

@@ -14,13 +14,13 @@ router.post("/logout", logout);
 // Logout All Devices Route
 router.post("/logout-all", authMiddleware, logoutAll);
 
+const { otpLimiter } = require("../middleware/rateLimiter");
+const { sendOtpValidation, verifyOtpValidation, updateProfileValidation } = require("../validations/authValidation");
+const validationMiddleware = require("../middleware/validationMiddleware");
+
 // Profile Route
 router.get("/profile", authMiddleware, profile);
-router.put("/profile", authMiddleware, updateProfile);
-
-const { otpLimiter } = require("../middleware/rateLimiter");
-const { sendOtpValidation, verifyOtpValidation } = require("../validations/authValidation");
-const validationMiddleware = require("../middleware/validationMiddleware");
+router.put("/profile", authMiddleware, updateProfileValidation, validationMiddleware, updateProfile);
 
 // OTP Routes
 router.post("/send-otp", otpLimiter, sendOtpValidation, validationMiddleware, sendOtp);

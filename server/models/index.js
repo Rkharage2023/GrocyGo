@@ -19,6 +19,13 @@ db.ProductKeyword = require("./ProductKeyword");
 db.Offer = require("./Offer");
 db.OfferProduct = require("./OfferProduct");
 db.OfferCategory = require("./OfferCategory");
+db.Wishlist = require("./Wishlist");
+
+// Wishlist Relationships
+db.User.hasMany(db.Wishlist, { foreignKey: "userId", onDelete: "CASCADE" });
+db.Wishlist.belongsTo(db.User, { foreignKey: "userId" });
+db.Product.hasMany(db.Wishlist, { foreignKey: "productId", onDelete: "CASCADE" });
+db.Wishlist.belongsTo(db.Product, { foreignKey: "productId" });
 
 // Relationships
 db.Category.hasMany(db.Product, {
