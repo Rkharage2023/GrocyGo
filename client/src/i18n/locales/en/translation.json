@@ -230,5 +230,10 @@
   "youSaved": "You Saved",
   "savingsThanksToOffers": "Thanks to GrocyGo offers on this order",
   "itemsBought": "Items Purchased",
-  "pickupSlot": "Pickup Slot"
+  "pickupSlot": "Pickup Slot",
+  "notifications": "Notifications",
+  "notificationsSubtitle": "Order updates & exclusive offers",
+  "markAllRead": "Mark all read",
+  "noNotifications": "No active notifications",
+  "noNotificationsDesc": "Order updates and special offers will appear here."
 }

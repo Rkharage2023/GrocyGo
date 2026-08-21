@@ -1,10 +1,11 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Search, ShoppingCart, Menu } from "lucide-react";
+import { ShoppingCart, Menu } from "lucide-react";
 import { useState, useRef, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { CartContext } from "../context/CartContext";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "./LanguageSwitcher";
+import NotificationBell from "./NotificationBell";
 
 import {
   FaUserCircle,
@@ -30,19 +31,9 @@ function Navbar() {
     location.pathname.startsWith("/dashboard") ||
     location.pathname.startsWith("/admin");
 
-  const [searchQuery, setSearchQuery] = useState("");
-
   const handleLogout = () => {
     logout();
     navigate("/login");
-  };
-
-  const handleSearchSubmit = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
-      setMobileMenu(false);
-    }
   };
 
   useEffect(() => {
@@ -76,36 +67,7 @@ function Navbar() {
             </div>
           </Link>
 
-          {/* Search */}
-          <form onSubmit={handleSearchSubmit} className="hidden md:flex flex-1 max-w-2xl relative">
-            <Search
-              size={20}
-              className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer"
-              onClick={handleSearchSubmit}
-            />
 
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("searchPlaceholder")}
-              className="
-              w-full
-              bg-green-50
-              border
-              border-green-200
-              rounded-full
-              py-3
-              pl-12
-              pr-5
-              outline-none
-              focus:border-green-500
-              focus:ring-2
-              focus:ring-green-200
-              transition
-              "
-            />
-          </form>
 
           {/* Right Side */}
           <div className="hidden md:flex items-center gap-4">
@@ -134,6 +96,9 @@ function Navbar() {
               </Link>
             ) : (
               <>
+                {/* Notification Bell */}
+                <NotificationBell />
+
                 {/* Cart (Hidden on Dashboard and Admin routes) */}
                 {!isDashboardOrAdmin && (
                   <Link
@@ -279,19 +244,24 @@ function Navbar() {
           </div>
 
           {/* Mobile Right Side Group */}
-          <div className="flex md:hidden items-center gap-4">
-            {isLoggedIn && !isDashboardOrAdmin && (
-              <Link
-                to="/cart"
-                className="relative p-2 rounded-full hover:bg-green-50 transition"
-              >
-                <ShoppingCart size={24} className="text-green-700" />
-                {cartCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
-                    {cartCount}
-                  </span>
+          <div className="flex md:hidden items-center gap-2 sm:gap-4">
+            {isLoggedIn && (
+              <>
+                <NotificationBell />
+                {!isDashboardOrAdmin && (
+                  <Link
+                    to="/cart"
+                    className="relative p-2 rounded-full hover:bg-green-50 transition"
+                  >
+                    <ShoppingCart size={24} className="text-green-700" />
+                    {cartCount > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                        {cartCount}
+                      </span>
+                    )}
+                  </Link>
                 )}
-              </Link>
+              </>
             )}
 
             <button
@@ -306,23 +276,7 @@ function Navbar() {
         {/* Mobile Menu */}
         {mobileMenu && (
           <div className="md:hidden py-4 border-t">
-            <form onSubmit={handleSearchSubmit} className="mb-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder={t("searchPlaceholder")}
-                className="
-                  w-full
-                  bg-green-50
-                  border
-                  border-green-200
-                  rounded-xl
-                  p-3
-                  outline-none
-                "
-              />
-            </form>
+
 
             {!isLoggedIn ? (
               <div className="space-y-4">

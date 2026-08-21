@@ -230,5 +230,10 @@
   "youSaved": "तुमी वाचवले",
   "savingsThanksToOffers": "या ऑर्डरवर GrocyGo ऑफरमुळे",
   "itemsBought": "खरेदी केलेल्या वस्तू",
-  "pickupSlot": "पिकअप वेळ"
+  "pickupSlot": "पिकअप वेळ",
+  "notifications": "सूचना (Notifications)",
+  "notificationsSubtitle": "ऑर्डर अपडेट्स आणि खास ऑफर्स",
+  "markAllRead": "सर्व वाचलेले म्हणून चिन्हांकित करा",
+  "noNotifications": "कोणत्याही नवीन सूचना नाहीत",
+  "noNotificationsDesc": "ऑर्डर अपडेट्स आणि विशेष ऑफर्स येथे दिसतील."
 }
