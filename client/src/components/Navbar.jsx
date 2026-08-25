@@ -61,7 +61,7 @@ function Navbar() {
             </div>
 
             <div>
-              <h1 className="text-2xl font-bold text-green-700">GrocyGo</h1>
+              <h1 className="text-2xl font-bold text-green-700">{t("storeName", { defaultValue: "Dake Kirana Store" })}</h1>
 
               <p className="text-xs text-gray-500">{t("freshQueueFree")}</p>
             </div>

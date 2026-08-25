@@ -149,7 +149,7 @@ function Login() {
         {/* Left Panel */}
         <div className="hidden md:flex flex-col justify-center items-center bg-gradient-to-br from-green-500 to-green-700 p-12 text-white">
           <ShoppingBasket size={90} />
-          <h1 className="text-4xl font-bold mt-6">GrocyGo</h1>
+          <h1 className="text-4xl font-bold mt-6">Dake Kirana Store</h1>
           <p className="text-center mt-5 text-green-100 leading-7">
             Shop groceries online, book your pickup slot, and collect your order
             without waiting in long queues.

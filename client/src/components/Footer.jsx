@@ -1,4 +1,4 @@
-import { ShoppingBasket, Phone, MapPin } from "lucide-react";
+import { ShoppingBasket, Phone, MapPin, Mail, Clock } from "lucide-react";
 import { FaInstagram, FaFacebookF, FaLinkedinIn } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -28,7 +28,7 @@ function Footer() {
               </div>
 
               <div>
-                <h2 className="text-3xl font-bold text-white">GrocyGo</h2>
+                <h2 className="text-2xl font-bold text-white">{t("storeName", { defaultValue: "Dake Kirana Store" })}</h2>
 
                 <p className="text-sm text-gray-400">{t("freshQueueFree")}</p>
               </div>
@@ -69,17 +69,28 @@ function Footer() {
           <div>
             <h3 className="text-white text-xl font-semibold">{t("contact")}</h3>
 
-            <div className="mt-6 space-y-5">
-              <div className="flex gap-3">
-                <Phone className="text-green-500" size={20} />
-
-                <p>+91 98765 43210</p>
+            <div className="mt-6 space-y-4 text-sm">
+              <div className="flex gap-3 items-center">
+                <Phone className="text-green-500 shrink-0" size={18} />
+                <p>+91 {t("storePhone", { defaultValue: "9604822360" })}</p>
               </div>
 
-              <div className="flex gap-3">
-                <MapPin className="text-green-500" size={20} />
+              <div className="flex gap-3 items-center">
+                <Mail className="text-green-500 shrink-0" size={18} />
+                <p>{t("storeEmail", { defaultValue: "dakekirana@gmail.com" })}</p>
+              </div>
 
-                <p>{t("locationVal")}</p>
+              <div className="flex gap-3 items-start">
+                <Clock className="text-green-500 shrink-0 mt-1" size={18} />
+                <div>
+                  <p className="font-semibold text-white">{t("storeTiming")}</p>
+                  <p className="text-xs text-gray-400">{t("storeTimingVal")}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 items-start">
+                <MapPin className="text-green-500 shrink-0 mt-1" size={18} />
+                <p className="text-xs leading-relaxed">{t("storeAddress")}</p>
               </div>
             </div>
 

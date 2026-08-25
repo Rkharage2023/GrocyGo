@@ -5,6 +5,8 @@ import CloudinaryGalleryModal from "./CloudinaryGalleryModal";
 
 const UNIT_OPTIONS = [
   "1kg",
+  "5kg",
+  "10kg",
   "500g",
   "250g",
   "200g",
@@ -13,9 +15,11 @@ const UNIT_OPTIONS = [
   "50g",
   "10g",
   "1L",
+  "5L",
   "750ml",
   "500ml",
   "250ml",
+  "Loose (सुट्टा)",
   "1 pc",
   "2 pcs",
   "4 pcs",

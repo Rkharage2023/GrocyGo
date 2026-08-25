@@ -25,7 +25,12 @@ function MyProfile() {
 
       try {
         const res = await API.get("/auth/profile");
-        setUser(res.data.user);
+        const userData = res.data?.user || res.data?.data?.user;
+        if (userData) {
+          setUser(userData);
+        } else {
+          navigate("/login");
+        }
       } catch (err) {
         console.error("Failed to fetch profile", err);
         navigate("/login");
@@ -55,7 +60,7 @@ function MyProfile() {
 
               <h1 className="text-3xl font-bold mt-4">{user.name}</h1>
 
-              <p className="text-gray-500">GrocyGo {user.role === "ADMIN" ? t("adminPanel", { defaultValue: "ADMIN" }) : t("customer")}</p>
+              <p className="text-gray-500">Dake Kirana Store {user.role === "ADMIN" ? t("adminPanel", { defaultValue: "ADMIN" }) : t("customer")}</p>
             </div>
 
             {/* Information */}

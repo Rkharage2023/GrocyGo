@@ -58,7 +58,7 @@ function Sidebar() {
     <aside className="w-72 bg-gradient-to-b from-green-700 to-green-800 text-white min-h-screen shadow-xl">
       {/* Logo */}
       <div className="px-8 py-8 border-b border-green-600">
-        <h1 className="text-3xl font-bold">🛒 GrocyGo</h1>
+        <h1 className="text-2xl font-bold">🛒 Dake Kirana Store</h1>
 
         <p className="text-green-200 mt-2">Customer Dashboard</p>
       </div>

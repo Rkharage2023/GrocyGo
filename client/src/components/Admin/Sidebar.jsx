@@ -93,7 +93,7 @@ function Sidebar({ isOpen, setIsOpen }) {
           onClick={() => setIsOpen && setIsOpen(false)}
           className="p-8 border-b border-green-600 block hover:bg-green-800/30 transition"
         >
-          <h1 className="text-3xl font-bold">🛒 GrocyGo</h1>
+          <h1 className="text-2xl font-bold">🛒 Dake Kirana Store</h1>
           <p className="text-green-200 mt-2">Admin Panel</p>
         </Link>
 

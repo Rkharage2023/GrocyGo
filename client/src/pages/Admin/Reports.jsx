@@ -269,7 +269,7 @@ function AdminReports() {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", `GrocyGo_Report_${startDate}_to_${endDate}.csv`);
+    link.setAttribute("download", `DakeKiranaStore_Report_${startDate}_to_${endDate}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

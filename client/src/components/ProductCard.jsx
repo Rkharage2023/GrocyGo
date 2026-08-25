@@ -6,7 +6,7 @@ import { WishlistContext } from "../context/WishlistContext";
 import { useTranslation } from "react-i18next";
 
 function ProductCard({ product }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { isLoggedIn } = useContext(AuthContext);
   const { addToCart } = useContext(CartContext);
   const { isWishlisted, toggleWishlist } = useContext(WishlistContext);
@@ -98,27 +98,52 @@ function ProductCard({ product }) {
 
         <h3 className="mt-5 text-lg font-bold text-gray-800 line-clamp-1">{product.name}</h3>
 
-        <p className="text-gray-500 mt-1 text-sm">{product.unit}</p>
+        {/* Unit & Loose badge */}
+        <div className="mt-1 flex items-center justify-center gap-1.5">
+          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+            {product.unit === "Loose (सुट्टा)" || product.unit === "Loose"
+              ? (i18n.language === "mr" ? "सुट्टा किराणा" : "Loose Kirana")
+              : product.unit}
+          </span>
+        </div>
 
+        {/* Pricing (MRP vs Kirana Selling Price) */}
         <div className="mt-3 flex flex-col items-center">
           {product.discount > 0 ? (
-            <div className="space-y-0.5">
+            <div className="space-y-0.5 text-center">
               <div className="flex items-center gap-2 justify-center">
-                <span className="line-through text-gray-400 text-sm font-semibold">
-                  ₹{parseFloat(product.originalPrice).toFixed(2)}
+                <span className="line-through text-gray-400 text-xs font-medium">
+                  M.R.P. ₹{parseFloat(product.originalPrice).toFixed(2)}
                 </span>
                 <span className="text-2xl font-black text-green-700">
                   ₹{parseFloat(product.finalPrice).toFixed(2)}
                 </span>
               </div>
-              <p className="text-[10px] text-green-600 font-extrabold uppercase tracking-wide">
+              <p className="text-[11px] bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block shadow-sm">
                 {t("savePrefix", { value: parseFloat(product.discount).toFixed(2), defaultValue: `Save ₹${parseFloat(product.discount).toFixed(2)}` })}
               </p>
             </div>
+          ) : product.mrp && parseFloat(product.mrp) > parseFloat(product.price) ? (
+            <div className="space-y-0.5 text-center">
+              <div className="flex items-center gap-2 justify-center">
+                <span className="line-through text-gray-400 text-xs font-medium">
+                  M.R.P. ₹{parseFloat(product.mrp).toFixed(2)}
+                </span>
+                <span className="text-2xl font-black text-green-700">
+                  ₹{parseFloat(product.price).toFixed(2)}
+                </span>
+              </div>
+              <p className="text-[11px] bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block shadow-sm">
+                {t("savePrefix", { value: (parseFloat(product.mrp) - parseFloat(product.price)).toFixed(2), defaultValue: `Save ₹${(parseFloat(product.mrp) - parseFloat(product.price)).toFixed(2)}` })}
+              </p>
+            </div>
           ) : (
-            <span className="text-2xl font-black text-green-700">
-              ₹{parseFloat(product.price).toFixed(2)}
-            </span>
+            <div className="text-center">
+              <span className="text-xs text-gray-400 block font-medium">Kirana Rate</span>
+              <span className="text-2xl font-black text-green-700">
+                ₹{parseFloat(product.price).toFixed(2)}
+              </span>
+            </div>
           )}
         </div>
       </div>

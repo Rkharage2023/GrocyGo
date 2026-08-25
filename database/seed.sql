@@ -1,22 +1,19 @@
 -- ============================================================
--- GrocyGo — Seed Data
+-- Dake Kirana Store (डाके किराणा स्टोअर्स) — Seed Data
 -- Database: grocery_store
--- Skips: users (already have 2 customers + 1 admin)
--- Includes: categories + products (Fully aligned with Multilingual & Pricing migrations)
+-- Includes: authentic Kirana categories + products with English & Marathi titles
 -- ============================================================
 
 USE grocery_store;
 
--- Force the connection character set to utf8mb4 to support emojis and Marathi script
 SET NAMES utf8mb4;
 
--- Safely drop existing tables (disabling foreign keys temporarily to avoid constraint issues)
 SET FOREIGN_KEY_CHECKS = 0;
 DROP TABLE IF EXISTS `products`;
 DROP TABLE IF EXISTS `categories`;
 SET FOREIGN_KEY_CHECKS = 1;
 
--- Create categories table with full schema support (including multilingual name_en and name_mr)
+-- Create categories table
 CREATE TABLE `categories` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name_en` VARCHAR(255) NOT NULL UNIQUE,
@@ -28,7 +25,7 @@ CREATE TABLE `categories` (
   `updatedAt` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Create products table with full schema support (multilingual names/descriptions & purchasePrice)
+-- Create products table
 CREATE TABLE `products` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `name_en` VARCHAR(255) NOT NULL,
@@ -51,81 +48,77 @@ CREATE TABLE `products` (
 
 
 -- ============================================================
--- STEP 1: CATEGORIES  (run this first)
+-- CATEGORIES
 -- ============================================================
 
 INSERT INTO `categories` (`id`, `name_en`, `name_mr`, `description`, `image`, `isActive`, `createdAt`, `updatedAt`) VALUES
-(1, 'Fruits & Vegetables',  'फळे आणि भाज्या',           'Fresh daily fruits and vegetables',              'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860009/Fruits_and_vegetables_iy4uw6.png', 1, NOW(), NOW()),
-(2, 'Dairy & Eggs',         'दुग्धजन्य पदार्थ आणि अंडी',  'Milk, cheese, butter, curd, and eggs',           'https://res.cloudinary.com/n0he2dk8/image/upload/v1783869620/Dairy_and_eggs_johjhr.png', 1, NOW(), NOW()),
-(3, 'Grains & Cereals',     'धान्य आणि कडधान्ये',       'Rice, wheat, oats, pulses and lentils',          'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859962/grains_and_cereals_ci6pob.png', 1, NOW(), NOW()),
-(4, 'Snacks & Beverages',   'स्नॅक्स आणि पेये',         'Chips, biscuits, juices, tea and coffee',        'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859903/Snacks_and_beverages_p7tsla.png', 1, NOW(), NOW()),
-(5, 'Meat & Fish',          'मांस आणि मासे',           'Fresh chicken, mutton, fish and seafood',        'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859934/Fresh_meats_zmadqd.png', 1, NOW(), NOW()),
-(6, 'Bakery & Bread',       'बेकरी आणि पाव',            'Fresh breads, cakes, buns and pastries',         'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860081/baked_bakery_anf1c7.png', 1, NOW(), NOW()),
-(7, 'Spices & Condiments',  'मसाले आणि सॉस',            'Masalas, sauces, pickles and oils',              'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859851/Spice_b41rcj.png', 1, NOW(), NOW()),
-(8, 'Frozen Foods',         'फ्रोझन पदार्थ',            'Frozen vegetables, ice cream and ready meals',   'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860039/frozen_foods_rjymar.png', 1, NOW(), NOW());
-
--- Verify: SELECT id, name_en, name_mr FROM categories;
+(1, 'Grains, Atta & Pulses',     'धान्य, आटा व डाळी',         'Wheat flour, rice, pulses, poha, rawa & cereals',  'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859962/grains_and_cereals_ci6pob.png', 1, NOW(), NOW()),
+(2, 'Edible Oils & Ghee',       'खाद्यतेल आणि तूप',         'Groundnut oil, sunflower oil, mustard oil & pure ghee', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860928/mustard_oil_h0wo09.png', 1, NOW(), NOW()),
+(3, 'Spices, Masala & Salt',    'मसाले, चटणी आणि मीठ',      'Kanda lasun masala, turmeric, chilli powder, sugar & salt', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859851/Spice_b41rcj.png', 1, NOW(), NOW()),
+(4, 'Tea, Sugar & Beverages',   'चहा, साखर आणि पेये',       'Society tea, Red Label, coffee, Bournvita & drinks', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861239/whole_wheat_bread_sdos3n.png', 1, NOW(), NOW()),
+(5, 'Dairy & Breakfast',        'दूध आणि नाश्ता',            'Fresh milk, butter, paneer, curd & breakfast items', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783869620/Dairy_and_eggs_johjhr.png', 1, NOW(), NOW()),
+(6, 'Snacks & Biscuits',        'बिस्किटे आणि स्नॅक्स',       'Parle-G, Good Day, chips, namkeen & biscuits', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783859903/Snacks_and_beverages_p7tsla.png', 1, NOW(), NOW()),
+(7, 'Soaps & Detergents',       'साबण आणि स्वच्छता',        'Washing powder, soaps, toothpaste & dishwash', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, NOW(), NOW()),
+(8, 'Fruits & Vegetables',      'फळे आणि भाज्या',           'Farm fresh daily onions, potatoes, tomatoes & fruits', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860009/Fruits_and_vegetables_iy4uw6.png', 1, NOW(), NOW());
 
 
 -- ============================================================
--- STEP 2: PRODUCTS
--- Assumes category IDs are 1-8 in the order inserted above.
--- Includes name_en, name_mr, description_en, description_mr, purchasePrice, createdAt, updatedAt
+-- PRODUCTS (Dake Kirana Catalog)
 -- ============================================================
 
 INSERT INTO `products` (`id`, `name_en`, `name_mr`, `description_en`, `description_mr`, `purchasePrice`, `price`, `stock`, `unit`, `image`, `isActive`, `categoryId`, `createdAt`, `updatedAt`) VALUES
-(1, 'Tomatoes', 'टोमॅटो', 'Fresh red farm tomatoes', 'ताजे लाल शेतातले टोमॅटो', 18.00, 25.00, 80, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861176/Fresh_tomatoes_gzxrkk.png', 1, 1, NOW(), NOW()),
-(2, 'Onions', 'कांदे', 'Premium quality white onions', 'उत्कृष्ट दर्जाचे पांढरे कांदे', 22.00, 30.00, 120, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860946/Onions_newzui.png', 1, 1, NOW(), NOW()),
-(3, 'Potatoes', 'बटाटे', 'Farm-fresh potatoes', 'शेतातले ताजे बटाटे', 20.00, 28.00, 100, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860996/Potatoes_sekdcl.png', 1, 1, NOW(), NOW()),
-(4, 'Spinach', 'पालक', 'Tender green spinach leaves', 'कोवळी हिरवी पालकाची पाने', 10.00, 15.00, 60, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861049/Fresh_spinach_qt5kbd.png', 1, 1, NOW(), NOW()),
-(5, 'Bananas', 'केळी', 'Ripe yellow bananas, pack of 6', 'पिवळी पिकलेली केळी, ६ चा पॅक', 28.00, 40.00, 90, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860205/Ripe_bananas_hgooij.png', 1, 1, NOW(), NOW()),
-(6, 'Apples', 'सफरचंद', 'Fresh red Shimla apples', 'शिमला ताजी लाल सफरचंद', 75.00, 99.00, 50, '4 pcs', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860187/Red_apples_tvfshj.png', 1, 1, NOW(), NOW()),
-(7, 'Carrots', 'गाजर', 'Crunchy fresh orange carrots', 'कुरकुरीत ताजे नारंगी गाजर', 25.00, 35.00, 70, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860280/carrots_jxv42f.png', 1, 1, NOW(), NOW()),
-(8, 'Cucumber', 'काकडी', 'Cool and crisp cucumbers', 'ताजी आणि कुरकुरीत काकडी', 14.00, 20.00, 55, '2 pcs', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860395/cucumbers_sblp1x.png', 1, 1, NOW(), NOW()),
-(9, 'Full Cream Milk', 'फुल क्रीम दूध', 'Fresh pasteurised full cream milk', 'ताजे पाश्चराइज्ड फुल क्रीम दूध', 48.00, 60.00, 100, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860886/Milk_hgdsws.png', 1, 2, NOW(), NOW()),
-(10, 'Amul Butter', 'अमुल लोणी', 'Salted butter from Amul', 'अमुल सॉल्टेड लोणी', 45.00, 55.00, 80, '100g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860172/Amul_butter_pfsuzo.png', 1, 2, NOW(), NOW()),
-(11, 'Paneer', 'पनीर', 'Fresh soft cottage cheese', 'ताजे मऊ पनीर', 70.00, 90.00, 45, '200g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860958/Fresh_paneer_gdeny4.png', 1, 2, NOW(), NOW()),
-(12, 'Curd / Dahi', 'दही', 'Thick set creamy curd', 'घट्ट आणि मलईदार दही', 32.00, 45.00, 60, '400g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860851/Fresh_curd_mmbt2v.png', 1, 2, NOW(), NOW()),
-(13, 'Eggs', 'अंडी', 'Farm-fresh eggs, tray of 12', 'फार्म-ताजी अंडी, १२ चा ट्रे', 60.00, 80.00, 70, 'Tray', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860859/fresh_eggs_fh3y3a.png', 1, 2, NOW(), NOW()),
-(14, 'Cheese Slices', 'चीज स्लाइसेस', 'Processed cheese slices, pack of 10', 'प्रोसेस्ड चीज स्लाइसेस, १० चा पॅक', 78.00, 99.00, 40, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860239/Amul_cheese_slices_sryfne.png', 1, 2, NOW(), NOW()),
-(15, 'Basmati Rice', 'बासमती तांदूळ', 'Long grain premium basmati rice', 'लांब दाण्याचा प्रीमियम बासमती तांदूळ', 95.00, 120.00, 60, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860218/Basmati_rice_2_vsij4y.png', 1, 3, NOW(), NOW()),
-(16, 'Wheat Flour (Atta)', 'गव्हाचे पीठ (आटा)', 'Whole wheat chakki fresh atta', 'गव्हाचे चक्की फ्रेश पीठ', 50.00, 65.00, 80, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861212/wheat_flour_2_oyovox.png', 1, 3, NOW(), NOW()),
-(17, 'Toor Dal', 'तूर डाळ', 'Yellow pigeon peas dal', 'पिवळी तूर डाळ', 72.00, 90.00, 50, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861188/toor_dal_2_q0htqo.png', 1, 3, NOW(), NOW()),
-(18, 'Chana Dal', 'चना डाळ', 'Split chickpea lentils', 'हरभरा डाळ', 68.00, 85.00, 50, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860230/chana_dal_mlgxm7.png', 1, 3, NOW(), NOW()),
-(19, 'Rolled Oats', 'रोल्ड ओट्स', 'Quick cook breakfast oats', 'झटपट तयार होणारे ओट्स', 58.00, 75.00, 40, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861029/Rolled_oats_gitecf.png', 1, 3, NOW(), NOW()),
-(20, 'Poha', 'पोहे', 'Flattened rice flakes for breakfast', 'न्याहारीसाठी सडलेले पोहे', 32.00, 45.00, 55, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860987/Poha_qx2cs9.png', 1, 3, NOW(), NOW()),
-(21, 'Lays Classic', 'लेज क्लासिक', 'Classic salted potato chips', 'क्लासिक सॉल्टेड बटाटा चिप्स', 15.00, 20.00, 100, '73g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860920/Lay_s_Classic_chips_hpad2i.png', 1, 4, NOW(), NOW()),
-(22, 'Bournvita', 'बॉर्नव्हिटा', 'Chocolate malt health drink powder', 'चॉकलेट माल्ट हेल्थ ड्रिंक पावडर', 160.00, 199.00, 30, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860271/Bournvita_tka2qw.png', 1, 4, NOW(), NOW()),
-(23, 'Tata Tea Gold', 'टाटा टी गोल्ड', 'Premium blend black tea leaves', 'प्रीमियम ब्लेंड काळा चहा', 100.00, 130.00, 50, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861239/whole_wheat_bread_sdos3n.png', 1, 4, NOW(), NOW()),
-(24, 'Tropicana Orange', 'ट्रॉपिकाना ऑरेंज', 'Fresh orange juice, no added sugar', 'ताजा संत्र्याचा रस', 60.00, 80.00, 60, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860791/orange_juice_m1bwcq.png', 1, 4, NOW(), NOW()),
-(25, 'Good Day Biscuits', 'गुड डे बिस्किटे', 'Butter cookies pack', 'बटर कुकीज पॅक', 22.00, 30.00, 90, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860902/Good_Day_iruya8.png', 1, 4, NOW(), NOW()),
-(26, 'Sprite', 'स्प्राइट', 'Chilled lime soda carbonated drink', 'थंड लिंबू सोडा पेय', 30.00, 40.00, 80, '750ml', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861133/Tata_Tea_Gold_rnskfj.png', 1, 4, NOW(), NOW()),
-(27, 'Chicken Breast', 'चिकन ब्रेस्ट', 'Fresh boneless skinless chicken breast', 'ताजे बोनलेस चिकन ब्रेस्ट', 170.00, 220.00, 30, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860348/lean_chicken_xg8rqy.png', 1, 5, NOW(), NOW()),
-(28, 'Rohu Fish', 'रोहू मासा', 'Fresh Rohu fish, cleaned and cut', 'ताजा स्वच्छ केलेला रोहू मासा', 140.00, 180.00, 20, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860658/rohu_fish_boprsd.png', 1, 5, NOW(), NOW()),
-(29, 'Prawns', 'कोळंबी', 'Fresh medium-sized prawns, deveined', 'ताजी मध्यम कोळंबी', 190.00, 250.00, 15, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861006/Fresh_prawns_gbqxha.png', 1, 5, NOW(), NOW()),
-(30, 'Mutton (Goat)', 'मटण (बोकड)', 'Fresh tender goat mutton pieces', 'ताजे बोकडाचे मटण', 300.00, 380.00, 10, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860938/nutritious_mutton_s7jc6c.png', 1, 5, NOW(), NOW()),
-(31, 'Salmon Fillet', 'सॅल्मन फिले', 'Fresh Atlantic salmon fillet', 'ताजे अटलांटिक सॅल्मन', 270.00, 350.00, 8, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861039/premium_salmon_fillet_me63cl.png', 1, 5, NOW(), NOW()),
-(32, 'Whole Wheat Bread', 'होल व्हीट ब्रेड', 'Soft whole wheat sandwich bread loaf', 'मऊ गव्हाचा सँडविच ब्रेड', 32.00, 45.00, 40, '400g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861239/whole_wheat_bread_sdos3n.png', 1, 6, NOW(), NOW()),
-(33, 'Croissants', 'क्रॉसंट्स', 'Buttery flaky croissants, pack of 4', 'बटरी आणि मऊ क्रॉसंट्स, ४ चा पॅक', 60.00, 80.00, 25, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860843/warm_croissants_pr0qfw.png', 1, 6, NOW(), NOW()),
-(34, 'Burger Buns', 'बर्गर बन्स', 'Soft sesame burger buns, pack of 6', 'मऊ तीळ बर्गर बन्स, ६ चा पॅक', 40.00, 55.00, 30, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860197/soft_burger_buns_sbmojz.png', 1, 6, NOW(), NOW()),
-(35, 'Pav (Dinner Rolls)', 'पाव', 'Soft ladi pav rolls, pack of 12', 'मऊ लडी पाव, १२ चा पॅक', 25.00, 35.00, 50, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860976/baked_soft_pav_rolls_rnstk5.png', 1, 6, NOW(), NOW()),
-(36, 'Chocolate Cake', 'चॉकलेट केक', 'Moist chocolate sponge cake slice', 'चॉकलेट स्पंज केक स्लाइझ', 50.00, 70.00, 20, '1 pc', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860364/chocolate_cake_wjka1m.png', 1, 6, NOW(), NOW()),
-(37, 'Turmeric Powder', 'हळद पावडर', 'Pure haldi powder for cooking', 'शुद्ध स्वयंपाकाची हळद पावडर', 40.00, 55.00, 60, '100g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 7, NOW(), NOW()),
-(38, 'Red Chilli Powder', 'लाल तिखट पावडर', 'Spicy Kashmiri lal mirch powder', 'काश्मिरी लाल तिखट पावडर', 48.00, 65.00, 55, '100g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861020/Red_chili_powder_eexayv.png', 1, 7, NOW(), NOW()),
-(39, 'Garam Masala', 'गरम मसाला', 'Aromatic whole spice blend powder', 'सुवासिक गरम मसाला पावडर', 55.00, 75.00, 45, '50g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860894/Garam_masala_l6i00h.png', 1, 7, NOW(), NOW()),
-(40, 'Tomato Ketchup', 'टोमॅटो केचप', 'Heinz classic tomato ketchup', 'क्लासिक टोमॅटो केचप', 72.00, 95.00, 40, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861156/tomato_ketchup_j59s7a.png', 1, 7, NOW(), NOW()),
-(41, 'Mustard Oil', 'मोहरीचे तेल', 'Cold-pressed pure mustard cooking oil', 'शुद्ध मोहरीचे स्वयंपाकाचे तेल', 92.00, 120.00, 35, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860928/mustard_oil_h0wo09.png', 1, 7, NOW(), NOW()),
-(42, 'Coconut Oil', 'खोबरेल तेल', 'Pure organic virgin coconut oil', 'शुद्ध खोबरेल तेल', 115.00, 150.00, 4, '500ml', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860753/coconut_oil_td8kwv.png', 1, 7, NOW(), NOW()),
-(43, 'Frozen Peas', 'फ्रोझन मटार', 'Sweet green peas, quick frozen', 'गोड हिरवे फ्रोझन मटार', 48.00, 65.00, 40, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860877/frozen_peas_hruvln.png', 1, 8, NOW(), NOW()),
-(44, 'Ice Cream Vanilla', 'व्हॅनिला आईस्क्रीम', 'Creamy vanilla ice cream tub', 'मलईदार व्हॅनिला आईस्क्रीम', 90.00, 120.00, 25, '500ml', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860911/vanilla_ice_cream_b7bl6e.png', 1, 8, NOW(), NOW()),
-(45, 'Frozen Corn', 'फ्रोझन मका', 'Golden sweet corn kernels, frozen', 'गोड फ्रोझन मक्याचे दाणे', 50.00, 70.00, 35, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860868/frozen_corn_jocrzx.png', 1, 8, NOW(), NOW()),
-(46, 'Frozen Paratha', 'फ्रोझन पराठा', 'Ready-to-cook wheat parathas, pack of 5', 'तयार पराठे, ५ चा पॅक', 68.00, 90.00, 30, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860579/Freshly_frozen_vtq8rm.png', 1, 8, NOW(), NOW()),
-(47, 'Chicken Nuggets', 'चिकन नगेट्स', 'Crispy breaded chicken nuggets, 15 pcs', 'कुरकुरीत चिकन नगेट्स, १५ पीसेस', 135.00, 180.00, 3, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860609/Chicken_Nuggets_sqbur2.png', 1, 8, NOW(), NOW()),
-(48, 'Hapus Mango', 'हापूस आंबा', 'Fresh and sweet', 'ताजा आणि गोड हापूस आंबा', 230.00, 300.00, 5, '12 pcs', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783875244/Hapus_mango_tcwsas.jpg', 1, 1, NOW(), NOW());
 
--- ============================================================
--- Verification Queries
--- ============================================================
--- SELECT id, name_en, name_mr FROM categories ORDER BY id;
--- SELECT id, name_en, name_mr, purchasePrice, price, stock, unit, categoryId FROM products ORDER BY categoryId, id;
--- SELECT COUNT(*) AS total_products FROM products;
+-- Category 1: Grains, Atta & Pulses
+(1, 'Aashirvaad Chakki Fresh Atta 5kg', 'आशिर्वाद चक्की फ्रेश आटा ५ किलो', '100% pure whole wheat chakki fresh atta', '१००% शुद्ध गव्हाचे चक्की फ्रेश पीठ', 205.00, 240.00, 45, '5kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861212/wheat_flour_2_oyovox.png', 1, 1, NOW(), NOW()),
+(2, 'Lokwan Wheat (Selected) 10kg', 'लोकवण गहू (निवडक) १० किलो', 'Premium cleaned Lokwan wheat grains', 'उत्कृष्ट दर्जाचा स्वच्छ केलेला लोकवण गहू', 380.00, 440.00, 50, '10kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861212/wheat_flour_2_oyovox.png', 1, 1, NOW(), NOW()),
+(3, 'Indrayani Rice 5kg', 'इंद्रायणी तांदूळ (सुवासिक) ५ किलो', 'Fragrant aromatic Indrayani rice', 'अत्यंत सुवासिक आणि मऊ शिजणारा इंद्रायणी तांदूळ', 310.00, 375.00, 30, '5kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860218/Basmati_rice_2_vsij4y.png', 1, 1, NOW(), NOW()),
+(4, 'Premium Basmati Rice 1kg', 'प्रीमियम बासमती तांदूळ १ किलो', 'Long grain aged Basmati rice', 'लांब दाण्याचा सुवासिक बासमती तांदूळ', 95.00, 125.00, 60, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860218/Basmati_rice_2_vsij4y.png', 1, 1, NOW(), NOW()),
+(5, 'Unpolished Toor Dal 1kg', 'पिवळी तूर डाळ (लहरी) १ किलो', 'Clean unpolished yellow pigeon peas dal', 'स्वच्छ आणि पौष्टिक पिवळी तूर डाळ', 138.00, 165.00, 50, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861188/toor_dal_2_q0htqo.png', 1, 1, NOW(), NOW()),
+(6, 'Chana Dal 1kg', 'हरभरा डाळ १ किलो', 'Split bengal gram chana dal', 'उत्कृष्ट दर्जाची स्वच्छ हरभरा डाळ', 76.00, 92.00, 55, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860230/chana_dal_mlgxm7.png', 1, 1, NOW(), NOW()),
+(7, 'Moong Dal 500g', 'पिवळी मूग डाळ ५०० ग्रॅम', 'Yellow split moong dal', 'सहज पचणारी पिवळी मूग डाळ', 50.00, 65.00, 40, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861188/toor_dal_2_q0htqo.png', 1, 1, NOW(), NOW()),
+(8, 'Thick Poha 1kg', 'जाड पोहे (न्याहारीसाठी) १ किलो', 'Fresh flaked rice for Maharashtrian Poha', 'उत्कृष्ट दर्जाचे पांढरे जाड पोहे', 42.00, 56.00, 70, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860987/Poha_qx2cs9.png', 1, 1, NOW(), NOW()),
+(9, 'Fine Rawa / Sooji 500g', 'बारीक रवा ५०० ग्रॅम', 'Fresh semolina rawa for upma and sweets', 'उपमा व शिऱ्यासाठी बारीक रवा', 24.00, 32.00, 50, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861029/Rolled_oats_gitecf.png', 1, 1, NOW(), NOW()),
+
+-- Category 2: Edible Oils & Ghee
+(10, 'Gemini Groundnut Oil 1L Pouch', 'जेमिनी शुद्ध शेंगदाणा तेल १ लि', 'Pure filtered groundnut cooking oil', 'अत्यंत शुद्ध आणि आरोग्यदायी शेंगदाणा तेल', 146.00, 172.00, 80, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860928/mustard_oil_h0wo09.png', 1, 2, NOW(), NOW()),
+(11, 'Gemini Groundnut Oil 5L Jar', 'जेमिनी शेंगदाणा तेल ५ लि जार', '5 Litre bulk jar of Gemini Groundnut Oil', '५ लिटरचा शेंगदाणा तेल फॅमिली जार', 740.00, 850.00, 25, '5L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860928/mustard_oil_h0wo09.png', 1, 2, NOW(), NOW()),
+(12, 'Fortune Sunlite Sunflower Oil 1L', 'फॉर्च्यून सूर्यफूल तेल १ लि', 'Refined sunflower cooking oil', 'हल्के आणि पचनास सोपे सूर्यफूल तेल', 124.00, 148.00, 60, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860928/mustard_oil_h0wo09.png', 1, 2, NOW(), NOW()),
+(13, 'Gowardhan Pure Cow Ghee 500ml', 'गोवर्धन शुद्ध गाईचे तूप ५०० मिली', 'Pure aromatic cow ghee tin/pack', 'स्वादिष्ट आणि सुवासिक शुद्ध गाईचे तूप', 310.00, 365.00, 35, '500ml', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860172/Amul_butter_pfsuzo.png', 1, 2, NOW(), NOW()),
+(14, 'Amul Pure Ghee 1L Tin', 'अमुल शुद्ध तूप १ लिटर टिन', 'Pure milk fat ghee from Amul', 'अमुलचे शुद्ध दाणेदार तूप', 610.00, 690.00, 20, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860172/Amul_butter_pfsuzo.png', 1, 2, NOW(), NOW()),
+
+-- Category 3: Spices, Masala & Salt
+(15, 'Bedekar Kanda Lasun Masala 500g', 'बेडेकर कांदा-लसूण मसाला ५०० ग्रॅम', 'Traditional Maharashtrian spicy masala blend', 'खमंग आणि झणझणीत कांदा-लसूण मसाला', 110.00, 140.00, 40, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860894/Garam_masala_l6i00h.png', 1, 3, NOW(), NOW()),
+(16, 'Pravin Kanda Lasun Masala 250g', 'प्रवीण कांदा-लसूण मसाला २५० ग्रॅम', 'Spicy aromatic Kolhapuri style masala', 'कोल्हापुरी चवीचा खास मसाला', 58.00, 75.00, 50, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860894/Garam_masala_l6i00h.png', 1, 3, NOW(), NOW()),
+(17, 'Everest Turmeric Powder 200g', 'एव्हरेस्ट हळद पावडर २०० ग्रॅम', 'Pure natural turmeric haldi powder', 'शुद्ध आणि नैसर्गिक हळद पावडर', 38.00, 50.00, 65, '200g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 3, NOW(), NOW()),
+(18, 'Kashmiri Red Chilli Powder 200g', 'काश्मिरी लाल तिखट पावडर २०० ग्रॅम', 'Rich color and mild spice chilli powder', 'छान रंग आणि मध्यम तिखट लाल मिरची पावडर', 52.00, 72.00, 60, '200g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861020/Red_chili_powder_eexayv.png', 1, 3, NOW(), NOW()),
+(19, 'Tata Salt Iodized 1kg', 'टाटा आयोडीन युक्त मीठ १ किलो', 'Vacuum evaporated pure iodized salt', 'शुद्ध आणि सुरक्षित टाटा मीठ', 22.00, 28.00, 120, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 3, NOW(), NOW()),
+(20, 'Kolhapuri Organic Jaggery (Gul) 1kg', 'कोल्हापुरी सेंद्रिय गूळ १ किलो', 'Natural unrefined chemical-free jaggery', 'रसायनमुक्त सेंद्रिय पिवळा गूळ', 54.00, 70.00, 50, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860894/Garam_masala_l6i00h.png', 1, 3, NOW(), NOW()),
+
+-- Category 4: Tea, Sugar & Beverages
+(21, 'Society Tea Leaf 500g', 'सोसायटी प्रीमियम चहा ५०० ग्रॅम', 'Strong aromatic blend tea leaves', 'अत्यंत कडक आणि सुवासिक चहा', 268.00, 310.00, 45, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861239/whole_wheat_bread_sdos3n.png', 1, 4, NOW(), NOW()),
+(22, 'Red Label Natural Care Tea 250g', 'रेड लेबल चहा २५० ग्रॅम', 'Tea infused with 5 Ayurvedic ingredients', 'आयुर्वेदिक घटकांनी युक्त चहा', 125.00, 150.00, 50, '250g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861239/whole_wheat_bread_sdos3n.png', 1, 4, NOW(), NOW()),
+(23, 'Pure White Sugar 1kg', 'शुद्ध पांढरी साखर १ किलो', 'Clean medium crystal sugar', 'स्वच्छ आणि मोठी पांढरी साखर', 38.00, 44.00, 150, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861029/Rolled_oats_gitecf.png', 1, 4, NOW(), NOW()),
+(24, 'Pure White Sugar 5kg Bag', 'साखर ५ किलो बॅग', '5kg bulk family packing sugar', '५ किलो कौटुंबिक साखरेची बॅग', 185.00, 215.00, 40, '5kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861029/Rolled_oats_gitecf.png', 1, 4, NOW(), NOW()),
+(25, 'Bournvita Health Drink 500g', 'बॉर्नव्हिटा ५०० ग्रॅम', 'Chocolate malt health drink powder', 'चॉकलेट माल्ट न्यूट्रिशन पावडर', 165.00, 199.00, 30, '500g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860271/Bournvita_tka2qw.png', 1, 4, NOW(), NOW()),
+
+-- Category 5: Dairy & Breakfast
+(26, 'Full Cream Fresh Milk 1L', 'ताजे फुल क्रीम दूध १ लिटर', 'Pasteurised full cream fresh milk', 'ताजे पाश्चराइज्ड फुल क्रीम दूध', 48.00, 60.00, 100, '1L', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860886/Milk_hgdsws.png', 1, 5, NOW(), NOW()),
+(27, 'Amul Butter 100g', 'अमुल लोणी १०० ग्रॅम', 'Salted butter from Amul', 'अमुल सॉल्टेड बटर', 46.00, 56.00, 80, '100g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860172/Amul_butter_pfsuzo.png', 1, 5, NOW(), NOW()),
+(28, 'Fresh Soft Paneer 200g', 'ताजे मऊ पनीर २०० ग्रॅम', 'Fresh cottage cheese for cooking', 'ताजे आणि मऊ मलाई पनीर', 70.00, 90.00, 45, '200g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860958/Fresh_paneer_gdeny4.png', 1, 5, NOW(), NOW()),
+(29, 'Thick Set Curd / Dahi 400g', 'घट्ट आणि मलईदार दही ४०० ग्रॅम', 'Thick set creamy curd', 'मऊ आणि घट्ट मलईदार दही', 32.00, 45.00, 60, '400g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860851/Fresh_curd_mmbt2v.png', 1, 5, NOW(), NOW()),
+
+-- Category 6: Snacks & Biscuits
+(30, 'Parle-G Gold Biscuits Pack', 'पारले-जी गोल्ड बिस्किटे पॅक', 'Classic glucose biscuits pack', 'लोकप्रिय पारले-जी बिस्किटे', 24.00, 30.00, 100, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860902/Good_Day_iruya8.png', 1, 6, NOW(), NOW()),
+(31, 'Britannia Good Day Butter 200g', 'गुड डे बटर कुकीज २०० ग्रॅम', 'Rich butter cookies', 'बटर समृद्ध स्वादिष्ट कुकीज', 25.00, 35.00, 90, '200g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860902/Good_Day_iruya8.png', 1, 6, NOW(), NOW()),
+(32, 'Lays Classic Potato Chips', 'लेज बटाटा चिप्स ७३ ग्रॅम', 'Crispy salted potato chips', 'कुरकुरीत बटाटा चिप्स', 15.00, 20.00, 100, '73g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860920/Lay_s_Classic_chips_hpad2i.png', 1, 6, NOW(), NOW()),
+
+-- Category 7: Soaps & Detergents
+(33, 'Surf Excel Easy Wash 1kg', 'सर्फ एक्सेल पावडर १ किलो', 'Detergent powder for easy stain removal', 'डाग दूर करणारी सर्फ एक्सेल पावडर', 122.00, 145.00, 50, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 7, NOW(), NOW()),
+(34, 'Rin Detergent Bar (Pack of 4)', 'रिन डिटर्जंट बार (४ चा पॅक)', 'Detergent bar for bright clean clothes', 'कपड्यांच्या स्वच्छतेसाठी रिन साबण', 38.00, 48.00, 60, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 7, NOW(), NOW()),
+(35, 'Lux Rose Beauty Soap (Pack of 3)', 'लक्स गुलाब साबण (३ चा पॅक)', 'Fragrant beauty bath soap pack', 'गुलाबाचा सुवासिक लक्स साबण', 85.00, 108.00, 40, 'Pack', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 7, NOW(), NOW()),
+(36, 'Colgate Strong Teeth 200g', 'कोलगेट टूथपेस्ट २०० ग्रॅम', 'Calcium dental care toothpaste', 'दातांच्या मजबुतीसाठी कोलगेट टूथपेस्ट', 88.00, 110.00, 55, '200g', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861198/Turmeric_powder_amzsyl.png', 1, 7, NOW(), NOW()),
+
+-- Category 8: Fruits & Vegetables
+(37, 'Farm Fresh Red Tomatoes 1kg', 'ताजे लाल शेतातले टोमॅटो १ किलो', 'Fresh red farm tomatoes', 'ताजे लाल शेतातले टोमॅटो', 22.00, 30.00, 80, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783861176/Fresh_tomatoes_gzxrkk.png', 1, 8, NOW(), NOW()),
+(38, 'Quality Red Onions 1kg', 'उत्कृष्ट दर्जाचे कांदे १ किलो', 'Clean dry quality red onions', 'निवडक पांढरे व लाल कांदे', 24.00, 32.00, 120, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860946/Onions_newzui.png', 1, 8, NOW(), NOW()),
+(39, 'Farm Fresh Potatoes 1kg', 'शेतातले ताजे बटाटे १ किलो', 'Fresh yellow farm potatoes', 'शेतातले ताजे बटाटे', 20.00, 28.00, 100, '1kg', 'https://res.cloudinary.com/n0he2dk8/image/upload/v1783860996/Potatoes_sekdcl.png', 1, 8, NOW(), NOW());

@@ -158,7 +158,7 @@ function Hero() {
                   mt-3
                   "
                 >
-                  GrocyGo
+                  {t("storeName", { defaultValue: "Dake Kirana Store" })}
                 </h2>
 
                 <p className="text-xs sm:text-sm text-gray-600 mt-1">{t("orderBookPickup")}</p>

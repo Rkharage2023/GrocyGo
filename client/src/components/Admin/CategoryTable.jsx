@@ -3,8 +3,10 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import EditCategoryModal from "./EditCategoryModal";
 import DeleteModal from "./DeleteModal";
 import API from "../../services/api";
+import { useToast } from "../../context/ToastContext";
 
 function CategoryTable({ categories, loading, onRefresh }) {
+  const toast = useToast();
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
@@ -22,12 +24,12 @@ function CategoryTable({ categories, loading, onRefresh }) {
   const handleDeleteConfirm = async () => {
     try {
       const res = await API.delete(`/categories/${selectedCategory.id}`);
-      alert(res.data.message || "Category deleted successfully");
+      toast.success(res.data.message || "Category deleted successfully");
       setIsDeleteOpen(false);
       onRefresh();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to delete category");
+      toast.error(err.response?.data?.message || "Failed to delete category");
     }
   };
 

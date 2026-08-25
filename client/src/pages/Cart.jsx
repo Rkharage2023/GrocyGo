@@ -112,6 +112,9 @@ function Cart() {
     }
   };
 
+  const [fulfillmentType, setFulfillmentType] = useState("STORE_PICKUP");
+  const [paymentMethod, setPaymentMethod] = useState("CASH"); // CASH or UPI
+
   const handleCheckout = async () => {
     if (!selectedSlotId) {
       setCheckoutError("Please select a pickup slot before placing your order.");
@@ -148,9 +151,9 @@ function Cart() {
       const snapshotDetails = { ...cartDetails };
       const snapshotSlot = availableSlots.find((s) => s.id === selectedSlotId);
 
-      const res = await orderService.checkout(selectedSlotId, "CASH");
+      const res = await orderService.checkout(selectedSlotId, paymentMethod);
       if (res.success) {
-        setBillSnapshot({ items: snapshotItems, details: snapshotDetails, slot: snapshotSlot });
+        setBillSnapshot({ items: snapshotItems, details: snapshotDetails, slot: snapshotSlot, paymentMethod, fulfillmentType });
         setCheckoutSuccessOrder(res.data);
         clearCart();
       } else {
@@ -529,6 +532,104 @@ function Cart() {
                 })()}
               </div>
 
+              {/* Fulfillment Type Selection */}
+              <div className="border-t border-gray-100 mt-5 pt-5 space-y-3">
+                <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
+                  <span>🏬</span> {t("fulfillmentMode", { defaultValue: "Fulfillment Option" })}
+                </h3>
+                <div className="bg-green-50/70 border border-green-200 rounded-2xl p-3.5 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-green-900 text-sm flex items-center gap-1.5">
+                      ✓ Counter Pickup / Self Pickup (काउंटरवर पिकअप)
+                    </span>
+                    <span className="bg-green-600 text-white text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase">
+                      No Queue
+                    </span>
+                  </div>
+                  <p className="text-xs text-green-700 leading-relaxed font-medium">
+                    Order online & pick up your packed Kirana bag directly at <strong>Dake Kirana Store counter</strong> with zero waiting!
+                  </p>
+                  <p className="text-[11px] text-gray-600 bg-white p-2 rounded-xl border border-green-100 font-mono">
+                    📍 Bhaji Market, IGM Rd, Ichalkaranji
+                  </p>
+                </div>
+              </div>
+
+              {/* Payment Method Selection */}
+              <div className="border-t border-gray-100 mt-5 pt-5 space-y-3">
+                <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
+                  <span>💳</span> {t("paymentMethod", { defaultValue: "Payment Method" })}
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("CASH")}
+                    className={`p-3 rounded-2xl border text-xs text-left transition-all font-bold ${
+                      paymentMethod === "CASH"
+                        ? "border-green-600 bg-green-50 text-green-800 shadow-sm ring-1 ring-green-600"
+                        : "border-gray-200 hover:border-green-300 text-gray-700 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>💵 Pay at Counter</span>
+                      {paymentMethod === "CASH" && <span className="text-green-600 font-black">✓</span>}
+                    </div>
+                    <span className="text-[10px] text-gray-500 block font-normal mt-1">Cash on Pickup / COD</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setPaymentMethod("UPI")}
+                    className={`p-3 rounded-2xl border text-xs text-left transition-all font-bold ${
+                      paymentMethod === "UPI"
+                        ? "border-green-600 bg-green-50 text-green-800 shadow-sm ring-1 ring-green-600"
+                        : "border-gray-200 hover:border-green-300 text-gray-700 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span>📲 Store UPI QR</span>
+                      {paymentMethod === "UPI" && <span className="text-green-600 font-black">✓</span>}
+                    </div>
+                    <span className="text-[10px] text-gray-500 block font-normal mt-1">GPay / PhonePe / Paytm</span>
+                  </button>
+                </div>
+
+                {/* UPI QR Display Card */}
+                {paymentMethod === "UPI" && (
+                  <div className="mt-3 bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl p-4 text-center animate-fadeIn shadow-sm">
+                    <div className="flex items-center justify-center gap-1.5 text-purple-900 font-extrabold text-xs mb-2">
+                      <span>🛒 Dake Kirana Official UPI</span>
+                    </div>
+                    <div className="w-40 h-40 bg-white p-2.5 rounded-2xl shadow-md mx-auto border border-purple-100 flex items-center justify-center">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=9604822360@ybl%26pn=Dake%20Kirana%20Store%26am=${cartDetails.grandTotal.toFixed(2)}%26cu=INR`}
+                        alt="Dake Kirana Store UPI QR Code"
+                        className="w-full h-full object-contain rounded-lg"
+                      />
+                    </div>
+                    <div className="mt-3 space-y-1">
+                      <p className="text-xs font-bold text-gray-800">
+                        Scan to Pay: <span className="text-purple-700 font-mono text-sm">9604822360@ybl</span>
+                      </p>
+                      <p className="text-[11px] text-gray-500">
+                        Merchant: <strong>Dake Kirana Store</strong> (Phone: 9604822360)
+                      </p>
+                      <div className="pt-2 flex justify-center gap-2">
+                        <span className="text-[10px] font-bold bg-white text-purple-700 px-2.5 py-1 rounded-full border border-purple-200 shadow-2xs">
+                          GPay
+                        </span>
+                        <span className="text-[10px] font-bold bg-white text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-200 shadow-2xs">
+                          PhonePe
+                        </span>
+                        <span className="text-[10px] font-bold bg-white text-blue-700 px-2.5 py-1 rounded-full border border-blue-200 shadow-2xs">
+                          Paytm
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {checkoutError && (
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start gap-2 animate-shake">
                   <AlertTriangle size={18} className="shrink-0 mt-0.5" />
@@ -667,7 +768,7 @@ function Cart() {
               {parseFloat(billSnapshot.details.discount || 0) > 0 && (
                 <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-4 text-center">
                   <p className="text-2xl font-black text-green-700">🎉 {t("youSaved", { defaultValue: "You Saved" })} ₹{parseFloat(billSnapshot.details.discount).toFixed(2)}!</p>
-                  <p className="text-green-600 text-xs mt-1 font-medium">{t("savingsThanksToOffers", { defaultValue: "Thanks to GrocyGo offers on this order" })}</p>
+                  <p className="text-green-600 text-xs mt-1 font-medium">{t("savingsThanksToOffers", { defaultValue: "Thanks to Dake Kirana Store offers on this order" })}</p>
                 </div>
               )}
             </div>

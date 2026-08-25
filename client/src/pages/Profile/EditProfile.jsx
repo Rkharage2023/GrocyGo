@@ -4,30 +4,35 @@ import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import API from "../../services/api";
 import { AuthContext } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
 
 function EditProfile() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const toast = useToast();
   const { updateProfileState, user } = useContext(AuthContext);
-  const isNewOrIncomplete = !user || user.name === "User";
+  const isNewOrIncomplete = !user || !user?.name || user?.name === "User";
 
   const [formData, setFormData] = useState({
-    name: "",
-    mobile: "",
-    address: "",
+    name: user?.name || "",
+    mobile: user?.mobile || "",
+    address: user?.address || "",
   });
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await API.get("/auth/profile");
-        setFormData({
-          name: res.data.user.name || "",
-          mobile: res.data.user.mobile || "",
-          address: res.data.user.address || "",
-        });
+        const userData = res.data?.user || res.data?.data?.user;
+        if (userData) {
+          setFormData({
+            name: userData.name || "",
+            mobile: userData.mobile || "",
+            address: userData.address || "",
+          });
+        }
       } catch (err) {
-        console.log(err);
+        console.error("Failed to load profile in EditProfile:", err);
       }
     };
 
@@ -45,23 +50,23 @@ function EditProfile() {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      alert(t("fullNameRequired", { defaultValue: "Full Name is required." }));
+      toast.warning(t("fullNameRequired", { defaultValue: "Full Name is required." }));
       return;
     }
 
     if (formData.name.trim().toLowerCase() === "user") {
-      alert(t("updateNameAlert", { defaultValue: "Please update your name to something other than 'User'." }));
+      toast.warning(t("updateNameAlert", { defaultValue: "Please update your name to something other than 'User'." }));
       return;
     }
 
     try {
       const res = await API.put("/auth/profile", formData);
       updateProfileState(res.data.user);
-      alert(t("profileUpdatedToast", { defaultValue: "Profile Updated Successfully" }));
+      toast.success(t("profileUpdatedToast", { defaultValue: "Profile Updated Successfully" }));
       navigate("/");
     } catch (err) {
       console.log(err);
-      alert(err.response?.data?.message || t("failedUpdateProfile", { defaultValue: "Failed to update profile" }));
+      toast.error(err.response?.data?.message || t("failedUpdateProfile", { defaultValue: "Failed to update profile" }));
     }
   };
 

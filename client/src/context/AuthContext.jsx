@@ -55,9 +55,16 @@ export function AuthProvider({ children }) {
       if (token) {
         try {
           const res = await API.get("/auth/profile");
-          if (res.data.success) {
-            setUser(res.data.user);
-            sessionStorage.setItem("user", JSON.stringify(res.data.user));
+          if (res.data?.success) {
+            const fetchedUser = res.data.user || res.data.data?.user;
+            if (fetchedUser) {
+              setUser(fetchedUser);
+              sessionStorage.setItem("user", JSON.stringify(fetchedUser));
+            } else {
+              sessionStorage.removeItem("token");
+              sessionStorage.removeItem("user");
+              setUser(null);
+            }
           } else {
             sessionStorage.removeItem("token");
             sessionStorage.removeItem("user");
@@ -85,10 +92,15 @@ export function AuthProvider({ children }) {
     if (name) payload.name = name;
     if (password) payload.password = password;
     const res = await API.post("/auth/verify-otp", payload);
-    if (res.data.success) {
-      sessionStorage.setItem("token", res.data.data.accessToken);
-      sessionStorage.setItem("user", JSON.stringify(res.data.data.user));
-      setUser(res.data.data.user);
+    if (res.data?.success) {
+      const accessToken = res.data.data?.accessToken || res.data.accessToken;
+      const userData = res.data.data?.user || res.data.user;
+      if (accessToken) sessionStorage.setItem("token", accessToken);
+      if (userData) {
+        sessionStorage.setItem("user", JSON.stringify(userData));
+        setUser(userData);
+      }
+      setLoading(false);
     }
     return res.data;
   };

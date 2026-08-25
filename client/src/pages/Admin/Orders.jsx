@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import * as orderService from "../../services/orderService";
 import API from "../../services/api";
+import { useToast } from "../../context/ToastContext";
 
 const formatTime12h = (timeStr) => {
   if (!timeStr) return "";
@@ -48,6 +49,7 @@ const formatDateDDMMYYYY = (dateVal) => {
 };
 
 function AdminOrders() {
+  const toast = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -75,10 +77,12 @@ function AdminOrders() {
   const [billLang, setBillLang] = useState("mr"); // "mr" | "en"
   const [isEditingBill, setIsEditingBill] = useState(false);
   const [billMeta, setBillMeta] = useState({
-    storeName: "GrocyGo",
-    tagline: "",
-    contact: "+91 98765 43210",
-    email: "support@grocygo.com",
+    storeName: "Dake Kirana Store",
+    storeNameMr: "डाके किराणा स्टोअर्स",
+    tagline: "आपले हक्काचे किराणा दुकान",
+    contact: "9604822360",
+    email: "dakekirana@gmail.com",
+    address: "MFQ4+MJ4, BHAJI MARKET, IGM Rd, near ANAA RAMGONDA SCHOOL, Ichalkaranji, Maharashtra 416115",
     gstin: "27AAAAA1111A1Z1",
     footerNote: "",
   });
@@ -248,14 +252,14 @@ function AdminOrders() {
     // Enforce payment status is PAID for COMPLETED orders
     if (newStatus === "COMPLETED") {
       if (currentOrder && currentOrder.paymentStatus !== "PAID") {
-        alert("Cannot mark order as COMPLETED because it has not been PAID yet.");
+        toast.warning("Cannot mark order as COMPLETED because it has not been PAID yet.");
         return;
       }
     }
 
     // Prevent completed -> pending transition
     if (currentOrder && currentOrder.status === "COMPLETED" && newStatus === "PENDING") {
-      alert("Cannot change status back to PENDING once it is COMPLETED.");
+      toast.warning("Cannot change status back to PENDING once it is COMPLETED.");
       return;
     }
 
@@ -271,16 +275,17 @@ function AdminOrders() {
       setStatusUpdateLoading(prev => ({ ...prev, [orderId]: true }));
       const res = await orderService.updateOrderStatus(orderId, newStatus);
       if (res.success) {
+        toast.success(`Order #${orderId} status updated to ${newStatus}`);
         setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
         if (selectedOrderId === orderId) {
           setOrderDetails(prev => prev ? { ...prev, status: newStatus } : null);
         }
       } else {
-        alert(res.message || "Failed to update order status");
+        toast.error(res.message || "Failed to update order status");
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || err.message || "Failed to update order status");
+      toast.error(err.response?.data?.message || err.message || "Failed to update order status");
     } finally {
       setStatusUpdateLoading(prev => ({ ...prev, [orderId]: false }));
     }
@@ -292,7 +297,7 @@ function AdminOrders() {
 
     // Enforce that a COMPLETED order cannot have its payment status changed to unpaid
     if (currentOrder && currentOrder.status === "COMPLETED" && newPaymentStatus !== "PAID") {
-      alert("Cannot change payment status of a COMPLETED order to unpaid.");
+      toast.warning("Cannot change payment status of a COMPLETED order to unpaid.");
       return;
     }
 
@@ -310,6 +315,7 @@ function AdminOrders() {
       setStatusUpdateLoading(prev => ({ ...prev, [`pay-${orderId}`]: true }));
       const res = await orderService.updateOrderPaymentStatus(orderId, newPaymentStatus);
       if (res.success) {
+        toast.success(`Payment status updated to ${newPaymentStatus}`);
         const updatedOrder = res.data;
         setOrders(prev => prev.map(o => o.id === orderId ? {
           ...o,
@@ -324,11 +330,11 @@ function AdminOrders() {
           } : null);
         }
       } else {
-        alert(res.message || "Failed to update payment status");
+        toast.error(res.message || "Failed to update payment status");
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || err.message || "Failed to update payment status");
+      toast.error(err.response?.data?.message || err.message || "Failed to update payment status");
     } finally {
       setStatusUpdateLoading(prev => ({ ...prev, [`pay-${orderId}`]: false }));
     }
@@ -340,6 +346,7 @@ function AdminOrders() {
       setStatusUpdateLoading(prev => ({ ...prev, [`meth-${orderId}`]: true }));
       const res = await orderService.updateOrderPaymentMethod(orderId, newPaymentMethod);
       if (res.success) {
+        toast.success(`Payment method updated to ${newPaymentMethod}`);
         const updatedOrder = res.data;
         setOrders(prev => prev.map(o => o.id === orderId ? {
           ...o,
@@ -352,11 +359,11 @@ function AdminOrders() {
           } : null);
         }
       } else {
-        alert(res.message || "Failed to update payment method");
+        toast.error(res.message || "Failed to update payment method");
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || err.message || "Failed to update payment method");
+      toast.error(err.response?.data?.message || err.message || "Failed to update payment method");
     } finally {
       setStatusUpdateLoading(prev => ({ ...prev, [`meth-${orderId}`]: false }));
     }
@@ -401,9 +408,9 @@ function AdminOrders() {
       qty: "प्रमाण", total: "एकूण", totalItems: "एकूण वस्तू",
       subtotal: "उप-एकूण (M.R.P.)", offerSavings: "ऑफर बचत", grandTotal: "महाएकूण",
       youSavedBanner: "🎉 या ऑर्डरवर तुमची ₹SAVINGS ची बचत झाली!",
-      thankYou: data.thankYouMsg || "GrocyGo सोबत खरेदी केल्याबद्दल आभारी आहोत!",
+      thankYou: data.thankYouMsg || "डाके किराणा स्टोअर्स सोबत खरेदी केल्याबद्दल आभारी आहोत!",
       bringCopy: data.bringCopyMsg || "पिकअप पडताळणीसाठी ही प्रत आणा.",
-      tagline: billMeta.tagline || "प्रीमियम ऑनलाइन किराणा दुकान",
+      tagline: billMeta.tagline || "आपले हक्काचे किराणा दुकान",
     } : {
       invoiceNo: "Invoice No", dateTime: "Date/Time",
       paymentMethod: "Payment Method", paymentStatus: "Payment Status",
@@ -412,9 +419,9 @@ function AdminOrders() {
       qty: "Qty", total: "Total", totalItems: "Total Items",
       subtotal: "Subtotal (M.R.P.)", offerSavings: "Offer Savings", grandTotal: "Grand Total",
       youSavedBanner: "🎉 You saved ₹SAVINGS on this order!",
-      thankYou: data.thankYouMsg || "Thank you for shopping with GrocyGo!",
+      thankYou: data.thankYouMsg || "Thank you for shopping with Dake Kirana Store!",
       bringCopy: data.bringCopyMsg || "Please bring this copy for slot verification during pickup.",
-      tagline: billMeta.tagline || "Premium Online Grocery Store",
+      tagline: billMeta.tagline || "Your Trusted Kirana Store",
     };
 
     const itemRows = (data.items || []).map((item, idx) => `
@@ -456,9 +463,10 @@ function AdminOrders() {
         </head>
         <body>
           <div style="text-align:center;border-bottom:1px dashed #d1d5db;padding-bottom:16px;">
-            <h2 style="font-size:24px;font-weight:800;margin:0;font-family:sans-serif;color:#111827;">${billMeta.storeName}</h2>
-            <p style="font-size:10px;color:#6b7280;margin:4px 0 0;font-family:sans-serif;">${L.tagline}</p>
-            <p style="font-size:10px;color:#6b7280;margin:4px 0 0;">Contact: ${billMeta.contact} &bull; ${billMeta.email}</p>
+            <h2 style="font-size:22px;font-weight:800;margin:0;font-family:sans-serif;color:#111827;">${billMeta.storeName}</h2>
+            <p style="font-size:11px;color:#16a34a;margin:2px 0 0;font-family:sans-serif;font-weight:bold;">${L.tagline}</p>
+            <p style="font-size:10px;color:#4b5563;margin:4px 0 0;font-family:sans-serif;line-height:1.3;">📍 ${billMeta.address}</p>
+            <p style="font-size:10px;color:#6b7280;margin:3px 0 0;">📞 Phone: ${billMeta.contact} &bull; ✉️ ${billMeta.email}</p>
             <p style="font-size:10px;color:#6b7280;margin:2px 0 0;">GSTIN: ${billMeta.gstin}</p>
           </div>
           <div style="padding:16px 0;border-bottom:1px dashed #d1d5db;">
@@ -1484,9 +1492,9 @@ function AdminOrders() {
           qty: "प्रमाण", total: "एकूण", totalItems: "एकूण वस्तू",
           subtotal: "उप-एकूण (M.R.P.)", offerSavings: "ऑफर बचत", grandTotal: "महाएकूण",
           youSavedBanner: "🎉 या ऑर्डरवर तुमची ₹SAVINGS ची बचत झाली!",
-          thankYou: "GrocyGo सोबत खरेदी केल्याबद्दल आभारी आहोत!",
+          thankYou: "डाके किराणा स्टोअर्स सोबत खरेदी केल्याबद्दल आभारी आहोत!",
           bringCopy: "पिकअप पडताळणीसाठी ही प्रत आणा.",
-          tagline: billMeta.tagline || "प्रीमियम ऑनलाइन किराणा दुकान",
+          tagline: billMeta.tagline || "आपले हक्काचे किराणा दुकान",
           printBtn: "बिल प्रिंट करा",
         } : {
           invoiceNo: "Invoice No", dateTime: "Date/Time",
@@ -1496,9 +1504,9 @@ function AdminOrders() {
           qty: "Qty", total: "Total", totalItems: "Total Items",
           subtotal: "Subtotal (M.R.P.)", offerSavings: "Offer Savings", grandTotal: "Grand Total",
           youSavedBanner: "🎉 You saved ₹SAVINGS on this order!",
-          thankYou: "Thank you for shopping with GrocyGo!",
+          thankYou: "Thank you for shopping with Dake Kirana Store!",
           bringCopy: "Please bring this copy for slot verification during pickup.",
-          tagline: billMeta.tagline || "Premium Online Grocery Store",
+          tagline: billMeta.tagline || "Your Trusted Kirana Store",
           printBtn: "Print Bill",
         };
         return (

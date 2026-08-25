@@ -94,7 +94,7 @@ function NotificationBell() {
                 id: `order-completed-${o.id}`,
                 type: "completed",
                 title: `Order #${o.id} Completed 🎉`,
-                message: `Order #${o.id} was picked up successfully. Thank you for shopping with GrocyGo!`,
+                message: `Order #${o.id} was picked up successfully. Thank you for shopping with Dake Kirana Store!`,
                 path: "/dashboard/orders",
                 time: timeStr,
                 createdAt: new Date(o.createdAt).getTime(),

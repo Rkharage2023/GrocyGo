@@ -11,9 +11,12 @@ function Settings() {
       try { return JSON.parse(saved); } catch {}
     }
     return {
-      storeName: "GrocyGo Fresh Market",
-      contactPhone: "+91 9876543210",
-      operatingHours: "08:00 AM - 09:00 PM",
+      storeName: "Dake Kirana Store",
+      storeNameMr: "डाके किराणा स्टोअर्स",
+      contactPhone: "9604822360",
+      contactEmail: "dakekirana@gmail.com",
+      storeAddress: "MFQ4+MJ4, BHAJI MARKET, IGM Rd, near ANAA RAMGONDA SCHOOL, Ichalkaranji, Maharashtra 416115",
+      operatingHours: "Morning: 9:15 AM - 1:30 PM | Evening: 3:30 PM - 8:30 PM",
       lowStockThreshold: 5,
       minOrderAmount: 100,
       enableAutoNotifications: true,
@@ -96,7 +99,7 @@ function Settings() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
-              Store Name
+              Store Name (English)
             </label>
             <input
               type="text"
@@ -104,6 +107,18 @@ function Settings() {
               onChange={(e) => handleChange("storeName", e.target.value)}
               className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
               required
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
+              Store Name (मराठी)
+            </label>
+            <input
+              type="text"
+              value={settings.storeNameMr || ""}
+              onChange={(e) => handleChange("storeNameMr", e.target.value)}
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 
@@ -117,6 +132,30 @@ function Settings() {
               onChange={(e) => handleChange("contactPhone", e.target.value)}
               className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
               required
+            />
+          </div>
+
+          <div>
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
+              Store Contact Email
+            </label>
+            <input
+              type="email"
+              value={settings.contactEmail || ""}
+              onChange={(e) => handleChange("contactEmail", e.target.value)}
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
+              Store Address
+            </label>
+            <textarea
+              rows={2}
+              value={settings.storeAddress || ""}
+              onChange={(e) => handleChange("storeAddress", e.target.value)}
+              className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
             />
           </div>
 

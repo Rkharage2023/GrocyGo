@@ -5,9 +5,13 @@ import API from "../../services/api";
 import AddProductModal from "../../components/Admin/AddProductModal";
 import EditProductModal from "../../components/Admin/EditProductModal";
 import DeleteModal from "../../components/Admin/DeleteModal";
+import QuickDailyPriceModal from "../../components/Admin/QuickDailyPriceModal";
+import { FaBolt } from "react-icons/fa";
+import { useToast } from "../../context/ToastContext";
 
 function Products() {
   const location = useLocation();
+  const toast = useToast();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -20,6 +24,7 @@ function Products() {
   const [openAddModal, setOpenAddModal] = useState(location.state?.openAdd || false);
   const [openEditModal, setOpenEditModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openQuickPriceModal, setOpenQuickPriceModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
 
   // Suggestions State
@@ -112,12 +117,12 @@ function Products() {
   const handleDeleteConfirm = async () => {
     try {
       await API.delete(`/products/${selectedProduct.id}`);
-      alert("Product deleted successfully!");
+      toast.success("Product deleted successfully!");
       setOpenDeleteModal(false);
       fetchProducts();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to delete product");
+      toast.error(err.response?.data?.message || "Failed to delete product");
     }
   };
 
@@ -153,12 +158,22 @@ function Products() {
           <p className="text-gray-500 mt-2">Manage products, stock, and pricing.</p>
         </div>
 
-        <button
-          onClick={() => setOpenAddModal(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md transition"
-        >
-          <FaPlus /> Add Product
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setOpenQuickPriceModal(true)}
+            className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 rounded-xl flex items-center gap-2 font-bold shadow-md transition"
+            title="Quick Daily Commodity Price Updater"
+          >
+            <FaBolt className="text-yellow-200" /> Daily Price Updater (२-क्लिक भाव)
+          </button>
+
+          <button
+            onClick={() => setOpenAddModal(true)}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md transition"
+          >
+            <FaPlus /> Add Product
+          </button>
+        </div>
       </div>
 
       {/* Filters & Search */}
@@ -310,13 +325,14 @@ function Products() {
                             isActive: newStatus
                           });
                           if (res.data.success) {
+                            toast.success(`Product status updated to ${newStatus ? "Active" : "Inactive"}`);
                             fetchProducts();
                           } else {
-                            alert(res.data.message || "Failed to update product status");
+                            toast.error(res.data.message || "Failed to update product status");
                           }
                         } catch (err) {
                           console.error(err);
-                          alert(err.response?.data?.message || "Failed to update product status");
+                          toast.error(err.response?.data?.message || "Failed to update product status");
                         }
                       }}
                       className={`text-xs font-bold rounded-full px-3 py-1.5 border outline-none cursor-pointer focus:ring-2 focus:ring-offset-1 transition ${
@@ -398,6 +414,14 @@ function Products() {
           onClose={() => setOpenDeleteModal(false)}
           onConfirm={handleDeleteConfirm}
           itemName={`Product "${selectedProduct.name}"`}
+        />
+      )}
+
+      {openQuickPriceModal && (
+        <QuickDailyPriceModal
+          isOpen={openQuickPriceModal}
+          onClose={() => setOpenQuickPriceModal(false)}
+          onRefresh={fetchProducts}
         />
       )}
     </div>

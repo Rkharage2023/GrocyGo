@@ -8,7 +8,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
 function ProductCard({ product, onAddToCart, adding }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const hasDiscount = product.discount > 0;
 
   const translateBadge = (badge) => {
@@ -70,20 +70,41 @@ function ProductCard({ product, onAddToCart, adding }) {
               <div className="space-y-0.5">
                 <div className="flex items-center gap-1.5">
                   <span className="line-through text-gray-400 text-xs font-semibold">
-                    ₹{parseFloat(product.originalPrice).toFixed(2)}
+                    M.R.P. ₹{parseFloat(product.originalPrice).toFixed(2)}
                   </span>
                   <span className="text-2xl font-black text-green-700">
                     ₹{parseFloat(product.finalPrice).toFixed(2)}
                   </span>
                 </div>
-                <p className="text-[10px] text-green-600 font-bold uppercase tracking-wide">
+                <p className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block">
                   {t("savePrefix", { value: parseFloat(product.discount).toFixed(2), defaultValue: `Save ₹${parseFloat(product.discount).toFixed(2)}` })}
                 </p>
               </div>
+            ) : product.mrp && parseFloat(product.mrp) > parseFloat(product.price) ? (
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="line-through text-gray-400 text-xs font-semibold">
+                    M.R.P. ₹{parseFloat(product.mrp).toFixed(2)}
+                  </span>
+                  <span className="text-2xl font-black text-green-700">
+                    ₹{parseFloat(product.price).toFixed(2)}
+                  </span>
+                </div>
+                <p className="text-[10px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block">
+                  {t("savePrefix", { value: (parseFloat(product.mrp) - parseFloat(product.price)).toFixed(2), defaultValue: `Save ₹${(parseFloat(product.mrp) - parseFloat(product.price)).toFixed(2)}` })}
+                </p>
+              </div>
             ) : (
-              <p className="text-2xl font-bold text-green-700">₹{parseFloat(product.price).toFixed(2)}</p>
+              <div>
+                <span className="text-[10px] text-gray-400 block font-medium uppercase tracking-wide">Kirana Rate</span>
+                <p className="text-2xl font-black text-green-700">₹{parseFloat(product.price).toFixed(2)}</p>
+              </div>
             )}
-            <p className="text-xs text-gray-450 mt-0.5 font-medium">{product.unit}</p>
+            <span className="inline-block mt-1 text-[11px] font-semibold text-gray-600 bg-gray-100 px-2 py-0.5 rounded-md">
+              {product.unit === "Loose (सुट्टा)" || product.unit === "Loose"
+                ? (i18n.language === "mr" ? "सुट्टा किराणा" : "Loose Kirana")
+                : product.unit}
+            </span>
           </div>
 
           <button

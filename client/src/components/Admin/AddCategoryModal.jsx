@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { FaTimes, FaCloud } from "react-icons/fa";
 import API from "../../services/api";
 import CloudinaryGalleryModal from "./CloudinaryGalleryModal";
+import { useToast } from "../../context/ToastContext";
 
 function AddCategoryModal({ isOpen, onClose, onRefresh }) {
+  const toast = useToast();
   const [nameEn, setNameEn] = useState("");
   const [nameMr, setNameMr] = useState("");
   const [description, setDescription] = useState("");
@@ -71,7 +73,7 @@ function AddCategoryModal({ isOpen, onClose, onRefresh }) {
     e.preventDefault();
 
     if (!nameEn.trim() || !nameMr.trim()) {
-      alert("English and Marathi category names are required");
+      toast.warning("English and Marathi category names are required");
       return;
     }
 
@@ -84,7 +86,7 @@ function AddCategoryModal({ isOpen, onClose, onRefresh }) {
         image: image.trim() || "📦",
       });
 
-      alert("Category created successfully!");
+      toast.success("Category created successfully!");
       setNameEn("");
       setNameMr("");
       setDescription("");
@@ -93,7 +95,7 @@ function AddCategoryModal({ isOpen, onClose, onRefresh }) {
       onClose();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to create category");
+      toast.error(err.response?.data?.message || "Failed to create category");
     } finally {
       setLoading(false);
     }
