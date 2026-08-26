@@ -44,17 +44,17 @@ function Categories() {
   return (
     <div>
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
             Category Management
           </h1>
-          <p className="text-gray-500 mt-2">Manage grocery categories.</p>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Manage grocery categories.</p>
         </div>
 
         <button
           onClick={() => setOpenModal(true)}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl flex items-center gap-2"
+          className="bg-green-600 hover:bg-green-700 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 font-semibold text-xs sm:text-sm shrink-0 self-start sm:self-auto"
         >
           <FaPlus />
           Add Category

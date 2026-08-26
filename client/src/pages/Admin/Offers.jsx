@@ -278,15 +278,15 @@ function AdminOffers() {
   return (
     <div className="space-y-6">
       {/* Title Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">Offer Management</h1>
-          <p className="text-gray-500 mt-2">Create discount codes, flash sales, buy X get Y promotions, and banners.</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Offer Management</h1>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Create discount codes, flash sales, buy X get Y promotions, and banners.</p>
         </div>
 
         <button
           onClick={openCreateModal}
-          className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md transition"
+          className="bg-green-600 hover:bg-green-700 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md transition text-xs sm:text-sm shrink-0 self-start sm:self-auto"
         >
           <FaPlus /> Create Offer
         </button>

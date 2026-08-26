@@ -322,54 +322,92 @@ function Cart() {
                   {/* Quantity and Line Total */}
                   <div className="flex items-center justify-between sm:justify-end gap-3 sm:gap-5 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-0 border-gray-100">
                     <div className="flex items-center gap-2 text-green-700 font-semibold">
-                      <input
-                        type="number"
-                        min="1"
-                        max={item.stock || 999}
-                        value={tempQuantities[item.id] !== undefined ? tempQuantities[item.id] : item.quantity}
-                        onFocus={(e) => {
-                          e.target.select();
-                          setTempQuantities((prev) => ({ ...prev, [item.id]: item.quantity.toString() }));
-                        }}
-                        onChange={(e) => {
-                          const rawVal = e.target.value;
-                          const val = parseInt(rawVal, 10);
-                          const maxStock = item.stock || 999;
-                          if (!isNaN(val) && val > maxStock) {
-                            setTempQuantities((prev) => ({ ...prev, [item.id]: maxStock.toString() }));
-                            updateQuantity(item.productId, maxStock);
-                            return;
-                          }
-                          setTempQuantities((prev) => ({ ...prev, [item.id]: rawVal }));
-                        }}
-                        onBlur={() => {
-                          const rawVal = tempQuantities[item.id];
-                          if (rawVal === undefined) return;
+                      {/* Quantity Stepper (- and +) */}
+                      <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50 overflow-hidden shadow-2xs">
+                        {/* Minus button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const currentVal = item.quantity;
+                            if (currentVal > 1) {
+                              updateQuantity(item.productId, currentVal - 1);
+                            } else {
+                              removeFromCart(item.productId);
+                            }
+                          }}
+                          className="w-8 h-8 flex items-center justify-center bg-white hover:bg-rose-50 text-gray-600 hover:text-rose-600 border-r border-gray-200 transition font-bold cursor-pointer"
+                          title={item.quantity === 1 ? "Remove item" : "Decrease quantity"}
+                        >
+                          <Minus size={14} />
+                        </button>
 
-                          let val = parseInt(rawVal, 10);
-                          if (isNaN(val) || val < 1) {
-                            val = 1;
-                          }
-                          const maxStock = item.stock || 999;
-                          let finalVal = val;
-                          if (val > maxStock) {
-                            finalVal = maxStock;
-                          }
-                          updateQuantity(item.productId, finalVal);
+                        {/* Input field */}
+                        <input
+                          type="number"
+                          min="1"
+                          max={item.stock || 999}
+                          value={tempQuantities[item.id] !== undefined ? tempQuantities[item.id] : item.quantity}
+                          onFocus={(e) => {
+                            e.target.select();
+                            setTempQuantities((prev) => ({ ...prev, [item.id]: item.quantity.toString() }));
+                          }}
+                          onChange={(e) => {
+                            const rawVal = e.target.value;
+                            const val = parseInt(rawVal, 10);
+                            const maxStock = item.stock || 999;
+                            if (!isNaN(val) && val > maxStock) {
+                              setTempQuantities((prev) => ({ ...prev, [item.id]: maxStock.toString() }));
+                              updateQuantity(item.productId, maxStock);
+                              return;
+                            }
+                            setTempQuantities((prev) => ({ ...prev, [item.id]: rawVal }));
+                          }}
+                          onBlur={() => {
+                            const rawVal = tempQuantities[item.id];
+                            if (rawVal === undefined) return;
 
-                          setTempQuantities((prev) => {
-                            const copy = { ...prev };
-                            delete copy[item.id];
-                            return copy;
-                          });
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            e.target.blur();
-                          }
-                        }}
-                        className="w-14 sm:w-16 h-8 text-center border-2 border-green-200 rounded-xl font-bold text-gray-800 outline-none focus:border-green-500 focus:ring-1 focus:ring-green-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none transition-colors text-sm"
-                      />
+                            let val = parseInt(rawVal, 10);
+                            if (isNaN(val) || val < 1) {
+                              val = 1;
+                            }
+                            const maxStock = item.stock || 999;
+                            let finalVal = val;
+                            if (val > maxStock) {
+                              finalVal = maxStock;
+                            }
+                            updateQuantity(item.productId, finalVal);
+
+                            setTempQuantities((prev) => {
+                              const copy = { ...prev };
+                              delete copy[item.id];
+                              return copy;
+                            });
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                              e.target.blur();
+                            }
+                          }}
+                          className="w-10 sm:w-12 h-8 text-center bg-white font-extrabold text-gray-800 outline-none text-xs sm:text-sm [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                        />
+
+                        {/* Plus button */}
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const currentVal = item.quantity;
+                            const maxStock = item.stock || 999;
+                            if (currentVal < maxStock) {
+                              updateQuantity(item.productId, currentVal + 1);
+                            }
+                          }}
+                          disabled={item.quantity >= (item.stock || 999)}
+                          className="w-8 h-8 flex items-center justify-center bg-white hover:bg-green-50 text-gray-600 hover:text-green-700 border-l border-gray-200 transition font-bold disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+                          title="Increase quantity"
+                        >
+                          <Plus size={14} />
+                        </button>
+                      </div>
 
                       <span className="text-gray-400">=</span>
 

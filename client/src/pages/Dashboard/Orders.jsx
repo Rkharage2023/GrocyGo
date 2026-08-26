@@ -344,9 +344,9 @@ function Orders() {
       ) : (
         <div className="space-y-6">
           {/* Toolbar */}
-          <div className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm space-y-4">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div className="relative flex-1 max-w-md">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-100 shadow-sm space-y-4">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="relative flex-1 w-full max-w-md">
                 <input
                   type="text"
                   placeholder={t("searchOrderPlaceholder", { defaultValue: "Search by Order ID..." })}
@@ -377,7 +377,7 @@ function Orders() {
                       setShowOrderSuggestions(false);
                     }
                   }}
-                  className="w-full bg-gray-50 border border-gray-200 rounded-2xl py-3 px-4 text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition"
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl sm:rounded-2xl py-2.5 sm:py-3 px-4 text-xs sm:text-sm outline-none focus:border-green-500 focus:ring-2 focus:ring-green-100 transition"
                 />
                 {showOrderSuggestions && searchTerm && orders.filter(o => o.id.toString().includes(searchTerm)).length > 0 && (
                   <div className="absolute left-0 right-0 mt-1 bg-white border border-gray-100 rounded-2xl shadow-xl z-20 overflow-hidden divide-y divide-gray-50 max-h-48">
@@ -404,7 +404,7 @@ function Orders() {
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 overflow-x-auto pb-1 max-w-full shrink-0">
+              <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 max-w-full shrink-0">
                 {["ALL", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].map((tab) => {
                   const getTabLabel = (tName) => {
                     switch (tName) {
@@ -420,7 +420,7 @@ function Orders() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition shrink-0 ${
+                      className={`px-3 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition shrink-0 ${
                         activeTab === tab
                           ? "bg-green-600 text-white shadow-xs"
                           : "bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200"

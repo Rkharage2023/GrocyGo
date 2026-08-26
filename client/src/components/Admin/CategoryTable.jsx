@@ -39,8 +39,8 @@ function CategoryTable({ categories, loading, onRefresh, onStatusToggle }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-hidden">
-      <table className="w-full text-left text-sm">
+    <div className="bg-white rounded-2xl shadow-xs border border-gray-100 overflow-x-auto touch-pan-x max-w-full">
+      <table className="w-full text-left text-sm min-w-[650px]">
         <thead className="bg-gray-50 border-b border-gray-100 text-gray-500 uppercase text-xs">
           <tr>
             <th className="py-3 px-4">Image</th>

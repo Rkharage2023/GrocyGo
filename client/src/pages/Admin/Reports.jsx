@@ -280,25 +280,25 @@ function AdminReports() {
       {/* Header with period and slot date filters */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Reports & Analytics</h1>
-          <p className="text-gray-500 mt-2 text-base">Visualize financial metrics and category catalogs.</p>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight">Reports & Analytics</h1>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Visualize financial metrics and category catalogs.</p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full lg:w-auto">
           {/* Export CSV Button */}
           <button
             onClick={handleExportCSV}
-            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-2xl font-bold text-xs transition shadow-sm"
+            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-bold text-xs transition shadow-sm shrink-0"
           >
             <FaDownload /> Export CSV
           </button>
 
           {/* Date Range Filter */}
-          <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-gray-200 shadow-sm overflow-x-auto max-w-full">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 bg-white p-3 rounded-2xl border border-gray-200 shadow-sm w-full sm:w-auto">
             <select
               value={datePreset}
               onChange={(e) => handleDatePresetChange(e.target.value)}
-              className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
+              className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer w-full sm:w-auto"
             >
               <option value="TODAY">Today</option>
               <option value="YESTERDAY">Yesterday</option>
@@ -308,27 +308,33 @@ function AdminReports() {
               <option value="LAST_MONTH">Last Month</option>
               <option value="CUSTOM">Custom Range</option>
             </select>
-            <div className="w-px h-6 bg-gray-200 mx-1 shrink-0"></div>
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap pl-1">From:</span>
-            <input
-              type="date"
-              value={startDate}
-              onChange={(e) => {
-                setStartDate(e.target.value);
-                setDatePreset("CUSTOM");
-              }}
-              className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
-            />
-            <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap pl-1">To:</span>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => {
-                setEndDate(e.target.value);
-                setDatePreset("CUSTOM");
-              }}
-              className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
-            />
+            <div className="hidden sm:block w-px h-6 bg-gray-200 mx-1 shrink-0" />
+            <div className="flex items-center gap-2 flex-1 flex-wrap">
+              <div className="flex items-center gap-1.5 flex-1 min-w-[130px]">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">From:</span>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => {
+                    setStartDate(e.target.value);
+                    setDatePreset("CUSTOM");
+                  }}
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer w-full"
+                />
+              </div>
+              <div className="flex items-center gap-1.5 flex-1 min-w-[130px]">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">To:</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => {
+                    setEndDate(e.target.value);
+                    setDatePreset("CUSTOM");
+                  }}
+                  className="bg-gray-50 border border-gray-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer w-full"
+                />
+              </div>
+            </div>
           </div>
         </div>
       </div>

@@ -80,9 +80,9 @@ function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-4xl font-bold text-gray-800">Welcome Back 👋</h1>
+      <h1 className="text-2xl sm:text-4xl font-bold text-gray-800">Welcome Back 👋</h1>
 
-      <p className="text-gray-500 mt-2">
+      <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">
         Here's what's happening in your grocery store today.
       </p>
 

@@ -272,10 +272,10 @@ function AdminPickupSlots() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold text-gray-800">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">
           Pickup Schedule Management
         </h1>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">
           Configure pickup timings and bulk generate slots for customers.
         </p>
       </div>
@@ -429,7 +429,7 @@ function AdminPickupSlots() {
         <div className="lg:col-span-2 space-y-6">
           {/* Card 1: Slots */}
           <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6 border-b pb-4">
+            <div className="flex flex-col gap-4 mb-6 border-b pb-4">
               <div>
                 <h2 className="text-xl font-bold text-gray-800">
                   Pickup Slots
@@ -439,48 +439,50 @@ function AdminPickupSlots() {
                 </p>
               </div>
               
-              <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-2">
+              <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2.5 w-full">
+                <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Date:</span>
                   <input
                     type="date"
                     value={selectedDate}
                     onChange={(e) => setSelectedDate(e.target.value)}
-                    className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
+                    className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer flex-1 sm:flex-initial"
                   />
-                  <span className="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-xl">
+                  <span className="text-xs font-bold text-green-700 bg-green-50 border border-green-200 px-2.5 py-1 rounded-xl shrink-0">
                     {formatDateDDMMYYYY(selectedDate)}
                   </span>
                 </div>
 
-                <button
-                  type="button"
-                  onClick={handleRefresh}
-                  className="text-xs bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5 animate-scaleUp"
-                  title="Refresh Slots & Orders"
-                >
-                  <FaSync /> Refresh
-                </button>
+                <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+                  <button
+                    type="button"
+                    onClick={handleRefresh}
+                    className="text-xs bg-green-50 hover:bg-green-100 text-green-700 border border-green-200 px-3 py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+                    title="Refresh Slots & Orders"
+                  >
+                    <FaSync /> Refresh
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleBulkStatusToggle(selectedDate, false)}
-                  disabled={sortedSlots.length === 0}
-                  className="text-xs bg-amber-50 hover:bg-amber-100 disabled:opacity-40 disabled:cursor-not-allowed text-amber-700 border border-amber-200 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5"
-                  title="Deactivate All Slots for this Date"
-                >
-                  Deactivate All (Day)
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleBulkStatusToggle(selectedDate, false)}
+                    disabled={sortedSlots.length === 0}
+                    className="text-xs bg-amber-50 hover:bg-amber-100 disabled:opacity-40 disabled:cursor-not-allowed text-amber-700 border border-amber-200 px-3 py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+                    title="Deactivate All Slots for this Date"
+                  >
+                    Deactivate All
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => handleBulkDelete(selectedDate)}
-                  disabled={sortedSlots.length === 0}
-                  className="text-xs bg-red-50 hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed text-red-700 border border-red-200 px-3 py-1.5 rounded-xl font-bold transition flex items-center gap-1.5"
-                  title="Delete All Slots for this Date"
-                >
-                  <FaTrash /> Delete All (Day)
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => handleBulkDelete(selectedDate)}
+                    disabled={sortedSlots.length === 0}
+                    className="text-xs bg-red-50 hover:bg-red-100 disabled:opacity-40 disabled:cursor-not-allowed text-red-700 border border-red-200 px-3 py-1.5 rounded-xl font-bold transition flex items-center justify-center gap-1.5 flex-1 sm:flex-initial"
+                    title="Delete All Slots for this Date"
+                  >
+                    <FaTrash /> Delete All
+                  </button>
+                </div>
               </div>
             </div>
 

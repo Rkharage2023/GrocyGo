@@ -152,26 +152,28 @@ function Products() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-4xl font-bold text-gray-800">Product Management</h1>
-          <p className="text-gray-500 mt-2">Manage products, stock, and pricing.</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Product Management</h1>
+          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Manage products, stock, and pricing.</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
           <button
             onClick={() => setOpenQuickPriceModal(true)}
-            className="bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 rounded-xl flex items-center gap-2 font-bold shadow-md transition"
+            className="bg-amber-500 hover:bg-amber-600 text-white px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 font-bold shadow-md transition text-xs sm:text-sm"
             title="Quick Daily Commodity Price Updater"
           >
-            <FaBolt className="text-yellow-200" /> Daily Price Updater (२-क्लिक भाव)
+            <FaBolt className="text-yellow-200 shrink-0" />
+            <span>Daily Price Updater (२-क्लिक भाव)</span>
           </button>
 
           <button
             onClick={() => setOpenAddModal(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md transition"
+            className="bg-green-600 hover:bg-green-700 text-white px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl flex items-center gap-2 font-semibold shadow-md transition text-xs sm:text-sm shrink-0"
           >
-            <FaPlus /> Add Product
+            <FaPlus />
+            <span>Add Product</span>
           </button>
         </div>
       </div>

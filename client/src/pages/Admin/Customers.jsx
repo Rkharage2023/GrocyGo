@@ -84,8 +84,8 @@ function AdminCustomers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-4xl font-bold text-gray-800">Customer Directory</h1>
-        <p className="text-gray-500 mt-2">View and manage all registered store customers based on active order metrics.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Customer Directory</h1>
+        <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">View and manage all registered store customers based on active order metrics.</p>
       </div>
 
       {error && (

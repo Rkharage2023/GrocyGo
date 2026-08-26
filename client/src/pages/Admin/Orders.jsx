@@ -914,26 +914,30 @@ function AdminOrders() {
             </div>
 
             {/* Date Range Filter */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">From:</span>
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
-              />
-              <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">To:</span>
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-2.5 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer"
-              />
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              <div className="flex items-center gap-1.5 flex-1 min-w-[130px]">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">From:</span>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer w-full"
+                />
+              </div>
+              <div className="flex items-center gap-1.5 flex-1 min-w-[130px]">
+                <span className="text-xs font-semibold text-gray-400 uppercase tracking-wider whitespace-nowrap">To:</span>
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="bg-gray-50 border border-gray-200 rounded-2xl px-3 py-2 text-xs font-bold text-gray-700 outline-none focus:ring-2 focus:ring-green-100 focus:border-green-500 transition cursor-pointer w-full"
+                />
+              </div>
               {(startDate || endDate) && (
                 <button
                   type="button"
                   onClick={() => { setStartDate(""); setEndDate(""); }}
-                  className="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-2.5 rounded-2xl font-bold transition flex items-center gap-1"
+                  className="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-2 rounded-2xl font-bold transition flex items-center gap-1 shrink-0"
                   title="Clear Dates"
                 >
                   Clear
@@ -1574,7 +1578,7 @@ function AdminOrders() {
               )}
 
               {/* Preview Area */}
-              <div className="p-8 overflow-y-auto flex-1 bg-gray-100/50 flex justify-center items-start">
+              <div className="p-3 sm:p-8 overflow-y-auto flex-1 bg-gray-100/50 flex justify-center items-start max-w-full">
                 {billLoading && (
                   <div className="flex flex-col items-center justify-center py-20 gap-3">
                     <div className="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin" />
@@ -1587,7 +1591,7 @@ function AdminOrders() {
                   </div>
                 )}
                 {billEditData && (
-                  <div id="printable-bill" className="bg-white shadow-lg border border-gray-200 p-8 w-full max-w-lg rounded-2xl font-mono text-xs text-gray-800 h-fit">
+                  <div id="printable-bill" className="bg-white shadow-lg border border-gray-200 p-4 sm:p-8 w-full max-w-lg rounded-2xl font-mono text-xs text-gray-800 h-fit overflow-x-auto">
                     {/* Store Header */}
                     <div className="text-center space-y-1.5 pb-6 border-b border-dashed border-gray-300">
                       <h2 className="text-2xl font-extrabold tracking-tight text-gray-950 font-sans">{billMeta.storeName}</h2>

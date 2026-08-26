@@ -66,8 +66,9 @@ function Categories() {
             grid-cols-2
             sm:grid-cols-3
             md:grid-cols-4
-            gap-3 sm:gap-8
-            mt-8 sm:mt-14
+            lg:grid-cols-6
+            gap-3 sm:gap-6
+            mt-6 sm:mt-12
             "
           >
             {categories.map((category) => (

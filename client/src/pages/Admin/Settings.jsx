@@ -51,8 +51,8 @@ function Settings() {
       )}
 
       <div>
-        <h1 className="text-4xl font-bold text-gray-800">Store Settings</h1>
-        <p className="text-gray-500 mt-2">Manage store preferences, operations, and thresholds.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold text-gray-800">Store Settings</h1>
+        <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">Manage store preferences, operations, and thresholds.</p>
       </div>
 
       {/* Admin Account Info */}
@@ -179,23 +179,12 @@ function Settings() {
             <input
               type="number"
               min="1"
-              max="50"
+              max="1000"
               value={settings.lowStockThreshold}
-              onChange={(e) => handleChange("lowStockThreshold", parseInt(e.target.value, 10) || 5)}
-              className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1">
-              Minimum Order Basket Total (₹)
-            </label>
-            <input
-              type="number"
-              min="0"
-              value={settings.minOrderAmount}
-              onChange={(e) => handleChange("minOrderAmount", parseInt(e.target.value, 10) || 0)}
+              onChange={(e) => {
+                const val = e.target.value;
+                handleChange("lowStockThreshold", val === "" ? "" : parseInt(val, 10));
+              }}
               className="w-full border border-gray-200 rounded-xl p-3 text-sm outline-none focus:ring-2 focus:ring-green-500"
               required
             />

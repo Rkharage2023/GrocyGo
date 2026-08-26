@@ -49,22 +49,22 @@ function LowStockProducts() {
           {products.map((product) => (
             <div
               key={product.id}
-              className="flex justify-between items-center border rounded-xl p-4 hover:bg-red-50 transition"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border rounded-xl p-3 sm:p-4 hover:bg-red-50 transition"
             >
-              <div className="flex items-center gap-4">
-                <div className="bg-red-100 p-3 rounded-full">
-                  <FaExclamationTriangle className="text-red-600 text-xl" />
+              <div className="flex items-center gap-3 sm:gap-4">
+                <div className="bg-red-100 p-2.5 sm:p-3 rounded-full shrink-0">
+                  <FaExclamationTriangle className="text-red-600 text-lg sm:text-xl" />
                 </div>
 
-                <div>
-                  <h3 className="font-semibold">{product.name}</h3>
+                <div className="min-w-0">
+                  <h3 className="font-semibold text-sm sm:text-base text-gray-800 truncate">{product.name}</h3>
 
-                  <p className="text-sm text-gray-500">{product.Category?.name || "N/A"}</p>
+                  <p className="text-xs text-gray-500">{product.Category?.name || "N/A"}</p>
                 </div>
               </div>
 
-              <div>
-                <span className="bg-red-100 text-red-700 px-4 py-2 rounded-full font-semibold">
+              <div className="self-start sm:self-auto">
+                <span className="bg-red-100 text-red-700 px-3 py-1 sm:px-4 sm:py-2 rounded-full font-semibold text-xs sm:text-sm inline-block">
                   {product.stock} {product.unit} Left
                 </span>
               </div>

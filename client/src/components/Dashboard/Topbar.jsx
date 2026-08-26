@@ -33,33 +33,33 @@ function Topbar({ toggleSidebar }) {
   }, []);
 
   return (
-    <header className="h-16 bg-white border-b border-gray-200 px-4 md:px-8 flex items-center justify-between shadow-sm">
+    <header className="h-16 bg-white border-b border-gray-200 px-3 md:px-8 flex items-center justify-between shadow-sm shrink-0 max-w-full overflow-hidden">
       {/* Left — Back button + welcome */}
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-1.5 md:gap-3 min-w-0">
         {/* Toggle Sidebar Button for Mobile */}
         <button
           onClick={toggleSidebar}
           title="Open Menu"
-          className="p-2 md:p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition lg:hidden"
+          className="p-2 md:p-2.5 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition lg:hidden shrink-0"
         >
-          <FaBars size={16} />
+          <FaBars size={15} />
         </button>
 
         <button
           onClick={() => navigate(-1)}
           title="Go Back"
-          className="hidden md:flex items-center gap-2 px-2.5 md:px-3 py-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition text-sm font-medium"
+          className="hidden md:flex items-center gap-2 px-2.5 md:px-3 py-2 rounded-xl border border-gray-200 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition text-sm font-medium shrink-0"
         >
           <FaArrowLeft size={13} />
           <span>{t("back")}</span>
         </button>
-        <div className="text-gray-500 text-xs md:text-sm font-medium">
+        <div className="text-gray-500 text-xs md:text-sm font-medium truncate max-w-[110px] sm:max-w-xs md:max-w-none">
           {t("welcomeBackCustomer")}{" "}
           <span className="text-green-700 font-bold">{user?.name?.split(" ")[0] || t("profile")}</span> 👋
         </div>
       </div>
 
-      <div className="flex items-center gap-2 md:gap-3">
+      <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
         {/* Shop Button */}
         <Link
           to="/products"

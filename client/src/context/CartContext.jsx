@@ -17,14 +17,14 @@ export function CartProvider({ children }) {
     grandTotal: 0,
   });
 
-  const fetchCart = async (date = null) => {
+  const fetchCart = async (date = null, showSpinner = true) => {
     if (!isLoggedIn) {
       setCartItems([]);
       setCartDetails({ subtotal: 0, discount: 0, savings: 0, grandTotal: 0 });
       return;
     }
     try {
-      setCartLoading(true);
+      if (showSpinner) setCartLoading(true);
       const res = await cartService.getMyCart(date);
       if (res.success && res.data?.items) {
         setCartItems(res.data.items);
@@ -43,7 +43,7 @@ export function CartProvider({ children }) {
       setCartItems([]);
       setCartDetails({ subtotal: 0, discount: 0, savings: 0, grandTotal: 0 });
     } finally {
-      setCartLoading(false);
+      if (showSpinner) setCartLoading(false);
     }
   };
 
@@ -53,7 +53,7 @@ export function CartProvider({ children }) {
 
   const addToCart = async (productId, quantity = 1) => {
     const res = await cartService.addToCart(productId, quantity);
-    await fetchCart();
+    await fetchCart(null, false);
     return res;
   };
 
@@ -61,14 +61,37 @@ export function CartProvider({ children }) {
     if (quantity < 1) {
       return removeFromCart(productId);
     }
+
+    // Optimistically update local cartItems state for 0ms latency
+    setCartItems((prevItems) =>
+      prevItems.map((item) => {
+        if (item.productId === productId || item.id === productId) {
+          const unitPrice = parseFloat(item.finalPrice || item.price || 0);
+          const newTotal = unitPrice * quantity;
+          return {
+            ...item,
+            quantity,
+            totalPrice: newTotal,
+            subtotal: parseFloat(item.price || 0) * quantity,
+          };
+        }
+        return item;
+      })
+    );
+
     const res = await cartService.updateCartQuantity(productId, quantity);
-    await fetchCart();
+    await fetchCart(null, false);
     return res;
   };
 
   const removeFromCart = async (productId) => {
+    // Optimistically remove item from local cartItems state
+    setCartItems((prevItems) =>
+      prevItems.filter((item) => item.productId !== productId && item.id !== productId)
+    );
+
     const res = await cartService.removeFromCart(productId);
-    await fetchCart();
+    await fetchCart(null, false);
     return res;
   };
 
