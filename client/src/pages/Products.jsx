@@ -227,6 +227,7 @@ function Products() {
 
   useEffect(() => {
     fetchProducts();
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }, [page, selectedCategory, search, sortBy, inStockOnly]);
 
   useEffect(() => {

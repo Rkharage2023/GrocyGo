@@ -12,18 +12,36 @@ function Topbar({ toggleSidebar }) {
   const { cartCount } = useContext(CartContext);
   const navigate = useNavigate();
 
-  const [openDropdown, setOpenDropdown] = useState(false);
-  const dropdownRef = useRef(null);
+  const [openNotifications, setOpenNotifications] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(1);
+  const notifRef = useRef(null);
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const customerNotifications = [
+    {
+      id: 1,
+      title: t("welcomeNotificationTitle", { defaultValue: "Welcome to Dake Kirana Store!" }),
+      time: "Just now",
+      desc: t("welcomeNotificationDesc", { defaultValue: "Browse categories, pick items, and schedule convenient store pickup." }),
+      type: "ORDER",
+      read: false,
+    },
+    {
+      id: 2,
+      title: t("offerNotificationTitle", { defaultValue: "Special Festival Discounts" }),
+      time: "Today",
+      desc: t("offerNotificationDesc", { defaultValue: "Check out active promotions and savings on essential groceries." }),
+      type: "OFFER",
+      read: false,
+    },
+  ];
 
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setOpenDropdown(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setOpenNotifications(false);
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
@@ -78,7 +96,7 @@ function Topbar({ toggleSidebar }) {
         <Link
           to="/cart"
           title="Cart"
-          className="relative w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center transition text-gray-500 hover:text-gray-700"
+          className="relative w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center transition text-gray-500 hover:text-gray-700 shrink-0"
         >
           <FaShoppingCart size={18} />
           {cartCount > 0 && (
@@ -87,6 +105,58 @@ function Topbar({ toggleSidebar }) {
             </span>
           )}
         </Link>
+
+        {/* Customer Notification Bell */}
+        <div className="relative shrink-0" ref={notifRef}>
+          <button
+            onClick={() => setOpenNotifications(!openNotifications)}
+            className="relative w-10 h-10 rounded-xl hover:bg-gray-100 flex items-center justify-center transition text-gray-500 hover:text-gray-700"
+            title="Notifications"
+          >
+            <FaBell size={18} />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white w-4 h-4 rounded-full text-[10px] font-bold flex items-center justify-center shadow-xs animate-pulse">
+                {unreadCount}
+              </span>
+            )}
+          </button>
+
+          {openNotifications && (
+            <div className="fixed inset-x-3 top-16 sm:top-auto sm:inset-auto sm:absolute sm:right-0 sm:mt-3 sm:w-96 bg-white border border-gray-100 rounded-2xl shadow-2xl py-3 z-50 animate-fadeIn">
+              <div className="px-4 pb-3 border-b border-gray-100 flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-gray-800 text-sm">{t("notifications", { defaultValue: "Notifications" })}</h3>
+                  <p className="text-[11px] text-gray-400">{t("customerAlertsDesc", { defaultValue: "Order updates & store announcements" })}</p>
+                </div>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => setUnreadCount(0)}
+                    className="text-[11px] font-semibold text-green-600 hover:text-green-700 bg-green-50 px-2.5 py-1 rounded-full transition"
+                  >
+                    {t("markAllRead", { defaultValue: "Mark all read" })}
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-72 overflow-y-auto divide-y divide-gray-50">
+                {customerNotifications.map((notif) => (
+                  <div key={notif.id} className="p-3.5 hover:bg-gray-50/80 transition flex items-start gap-3">
+                    <div className="w-8 h-8 rounded-full bg-green-50 text-green-700 flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                      📣
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between gap-2">
+                        <h4 className="text-xs font-bold text-gray-800 truncate">{notif.title}</h4>
+                        <span className="text-[10px] text-gray-400 shrink-0">{notif.time}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-0.5 leading-snug line-clamp-2">{notif.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* Profile Dropdown */}
         <div className="relative" ref={dropdownRef}>
