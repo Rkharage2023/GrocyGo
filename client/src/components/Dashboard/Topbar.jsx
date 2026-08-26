@@ -12,6 +12,14 @@ function Topbar({ toggleSidebar }) {
   const { cartCount } = useContext(CartContext);
   const navigate = useNavigate();
 
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const dropdownRef = useRef(null);
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
+
   const [openNotifications, setOpenNotifications] = useState(false);
   const [unreadCount, setUnreadCount] = useState(1);
   const notifRef = useRef(null);
