@@ -13,6 +13,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Failed to call logout API", err);
     } finally {
+      localStorage.removeItem("hasLoggedIn");
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user");
       setUser(null);
@@ -25,6 +26,7 @@ export function AuthProvider({ children }) {
     } catch (err) {
       console.error("Failed to call logout-all API", err);
     } finally {
+      localStorage.removeItem("hasLoggedIn");
       sessionStorage.removeItem("token");
       sessionStorage.removeItem("user");
       setUser(null);
@@ -36,17 +38,23 @@ export function AuthProvider({ children }) {
       let token = sessionStorage.getItem("token");
 
       if (!token) {
-        try {
-          const res = await API.post("/auth/refresh");
-          if (res.data.success) {
-            token = res.data.data.accessToken;
-            sessionStorage.setItem("token", token);
+        const hasLoggedIn = localStorage.getItem("hasLoggedIn") === "true";
+        if (hasLoggedIn) {
+          try {
+            const res = await API.post("/auth/refresh");
+            if (res.data?.success) {
+              token = res.data.data.accessToken;
+              sessionStorage.setItem("token", token);
+            }
+          } catch (err) {
+            localStorage.removeItem("hasLoggedIn");
+            sessionStorage.removeItem("token");
+            sessionStorage.removeItem("user");
+            setUser(null);
+            setLoading(false);
+            return;
           }
-        } catch (err) {
-          console.error("Failed to auto-login using refresh token on mount", err);
-          sessionStorage.removeItem("token");
-          sessionStorage.removeItem("user");
-          setUser(null);
+        } else {
           setLoading(false);
           return;
         }
@@ -60,18 +68,22 @@ export function AuthProvider({ children }) {
             if (fetchedUser) {
               setUser(fetchedUser);
               sessionStorage.setItem("user", JSON.stringify(fetchedUser));
+              localStorage.setItem("hasLoggedIn", "true");
             } else {
+              localStorage.removeItem("hasLoggedIn");
               sessionStorage.removeItem("token");
               sessionStorage.removeItem("user");
               setUser(null);
             }
           } else {
+            localStorage.removeItem("hasLoggedIn");
             sessionStorage.removeItem("token");
             sessionStorage.removeItem("user");
             setUser(null);
           }
         } catch (err) {
           console.error("Failed to load user profile", err);
+          localStorage.removeItem("hasLoggedIn");
           sessionStorage.removeItem("token");
           sessionStorage.removeItem("user");
           setUser(null);
@@ -95,7 +107,10 @@ export function AuthProvider({ children }) {
     if (res.data?.success) {
       const accessToken = res.data.data?.accessToken || res.data.accessToken;
       const userData = res.data.data?.user || res.data.user;
-      if (accessToken) sessionStorage.setItem("token", accessToken);
+      if (accessToken) {
+        sessionStorage.setItem("token", accessToken);
+        localStorage.setItem("hasLoggedIn", "true");
+      }
       if (userData) {
         sessionStorage.setItem("user", JSON.stringify(userData));
         setUser(userData);

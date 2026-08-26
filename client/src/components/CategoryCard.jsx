@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 function CategoryCard({ category }) {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <Link
       to={`/products?categoryId=${category.id}`}
@@ -34,10 +37,15 @@ function CategoryCard({ category }) {
         border
         "
       >
-        {category.image && category.image.startsWith("http") ? (
-          <img src={category.image} className="w-full h-full object-cover" alt={category.name} />
+        {category.image && category.image.startsWith("http") && !imgError ? (
+          <img
+            src={category.image}
+            className="w-full h-full object-cover"
+            alt={category.name}
+            onError={() => setImgError(true)}
+          />
         ) : (
-          category.image || "🛍️"
+          category.image && !category.image.startsWith("http") ? category.image : "🛍️"
         )}
       </div>
 

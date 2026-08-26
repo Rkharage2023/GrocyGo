@@ -1,4 +1,5 @@
 import { useState, useContext } from "react";
+import { useTranslation } from "react-i18next";
 import { ShoppingCart, Heart } from "lucide-react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
@@ -13,6 +14,7 @@ function ProductCard({ product }) {
   const { isWishlisted, toggleWishlist } = useContext(WishlistContext);
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const activeWish = isWishlisted(product.id);
 
@@ -77,10 +79,15 @@ function ProductCard({ product }) {
       {/* Product image + info */}
       <div className="text-center mt-1 sm:mt-2 flex-1 flex flex-col items-center">
         <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl bg-gray-50 border border-gray-100 shadow-2xs relative group">
-          {product.image && product.image.startsWith("http") ? (
-            <img src={product.image} className="w-full h-full object-cover" alt={product.name} />
+          {product.image && product.image.startsWith("http") && !imgError ? (
+            <img
+              src={product.image}
+              className="w-full h-full object-cover"
+              alt={product.name}
+              onError={() => setImgError(true)}
+            />
           ) : (
-            <span className="text-5xl sm:text-7xl">{product.image || "📦"}</span>
+            <span className="text-5xl sm:text-7xl">{imgError ? "📦" : (product.image || "📦")}</span>
           )}
 
           <button
