@@ -308,10 +308,10 @@ function Products() {
                   </td>
                   <td className="text-gray-500">{product.unit}</td>
                   <td>
-                    <select
-                      value={product.isActive ? "true" : "false"}
-                      onChange={async (e) => {
-                        const newStatus = e.target.value === "true";
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const newStatus = !product.isActive;
                         try {
                           const res = await API.put(`/products/${product.id}`, {
                             name: product.name,
@@ -326,7 +326,9 @@ function Products() {
                           });
                           if (res.data.success) {
                             toast.success(`Product status updated to ${newStatus ? "Active" : "Inactive"}`);
-                            fetchProducts();
+                            setProducts((prev) =>
+                              prev.map((p) => (p.id === product.id ? { ...p, isActive: newStatus } : p))
+                            );
                           } else {
                             toast.error(res.data.message || "Failed to update product status");
                           }
@@ -335,15 +337,20 @@ function Products() {
                           toast.error(err.response?.data?.message || "Failed to update product status");
                         }
                       }}
-                      className={`text-xs font-bold rounded-full px-3 py-1.5 border outline-none cursor-pointer focus:ring-2 focus:ring-offset-1 transition ${
+                      className={`relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold transition-all duration-200 border cursor-pointer select-none active:scale-95 ${
                         product.isActive
-                          ? "bg-green-50 text-green-700 border-green-200 focus:ring-green-400"
-                          : "bg-red-50 text-red-700 border-red-200 focus:ring-red-400"
+                          ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                          : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
                       }`}
+                      title={product.isActive ? "Click to set Inactive" : "Click to set Active"}
                     >
-                      <option value="true">Active</option>
-                      <option value="false">Inactive</option>
-                    </select>
+                      <span
+                        className={`w-2.5 h-2.5 rounded-full transition-colors ${
+                          product.isActive ? "bg-green-600 animate-pulse" : "bg-red-500"
+                        }`}
+                      />
+                      <span>{product.isActive ? "Active" : "Inactive"}</span>
+                    </button>
                   </td>
                   <td>
                     <button

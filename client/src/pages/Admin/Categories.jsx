@@ -124,6 +124,11 @@ function Categories() {
           categories={filteredCategories} 
           loading={loading} 
           onRefresh={fetchCategories} 
+          onStatusToggle={(id, newStatus) => {
+            setCategories((prev) =>
+              prev.map((c) => (c.id === id ? { ...c, isActive: newStatus } : c))
+            );
+          }}
         />
         <AddCategoryModal
           isOpen={openModal}

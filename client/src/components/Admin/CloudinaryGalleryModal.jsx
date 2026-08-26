@@ -15,17 +15,10 @@ function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "produ
   useEffect(() => {
     if (isOpen) {
       fetchCloudinaryImages();
+      setSelectedFolder(""); // Default to "All Folders" so images are always visible immediately
+      setSearchQuery("");
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    // If a category name is passed, let's pre-filter by it
-    if (currentCategoryName) {
-      setSelectedFolder(currentCategoryName);
-    } else {
-      setSelectedFolder("");
-    }
-  }, [currentCategoryName, activeTab]);
 
   if (!isOpen) return null;
 
@@ -75,19 +68,24 @@ function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "produ
   };
 
   // Helper to normalize strings for comparison
-  const normalize = (str) => str.toLowerCase().replace(/[^a-z0-9]+/g, "");
+  const normalize = (str) => (str || "").toLowerCase().replace(/[^a-z0-9]+/g, "");
 
-  // Filter images based on tab, search, and folder/category selection
-  const currentList = activeTab === "products" ? images.products : images.categories;
+  // Determine current image list with automatic fallbacks so gallery never appears empty if images exist
+  const productsList = (images.products && images.products.length > 0) ? images.products : (images.all || []);
+  const categoriesList = (images.categories && images.categories.length > 0) ? images.categories : (images.all || []);
+
+  const rawList = activeTab === "products" ? productsList : categoriesList;
+  const currentList = rawList.length > 0 ? rawList : (images.all || []);
 
   const uniqueFolders = [
     ...new Set(currentList.map((img) => img.folderName || "")),
   ].filter(Boolean).sort();
 
-  const filteredImages = currentList.filter((img) => {
+  let filteredImages = currentList.filter((img) => {
     const filename = img.filename || "";
     const folderName = img.folderName || "";
     const matchesSearch =
+      !searchQuery ||
       filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
       folderName.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -95,7 +93,6 @@ function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "produ
       const normSelected = normalize(selectedFolder);
       const normImgFolder = normalize(folderName);
       
-      // Category folder name matching database category name mapping helper
       const matchesFolder =
         normImgFolder === normSelected ||
         normImgFolder.includes(normSelected) ||
@@ -106,6 +103,19 @@ function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "produ
 
     return matchesSearch;
   });
+
+  // Safety fallback: if a folder filter yields 0 items, display all items matching search query
+  if (selectedFolder && filteredImages.length === 0 && currentList.length > 0) {
+    filteredImages = currentList.filter((img) => {
+      const filename = img.filename || "";
+      const folderName = img.folderName || "";
+      return (
+        !searchQuery ||
+        filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        folderName.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  }
 
   return (
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4 backdrop-blur-sm">

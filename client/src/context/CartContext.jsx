@@ -49,7 +49,7 @@ export function CartProvider({ children }) {
 
   useEffect(() => {
     fetchCart();
-  }, [isLoggedIn, i18n.language]);
+  }, [isLoggedIn]);
 
   const addToCart = async (productId, quantity = 1) => {
     const res = await cartService.addToCart(productId, quantity);

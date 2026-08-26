@@ -9,20 +9,26 @@ function TrendingProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await API.get("/products?limit=4");
-        if (res.data.success) {
-          setProducts(res.data.data.products);
-        }
-      } catch (err) {
-        console.error("Error fetching trending products:", err);
-      } finally {
-        setLoading(false);
+  const fetchProducts = async (showSpinner = true) => {
+    try {
+      if (showSpinner) setLoading(true);
+      const res = await API.get("/products?limit=4");
+      if (res.data.success) {
+        setProducts(res.data.data.products);
       }
-    };
-    fetchProducts();
+    } catch (err) {
+      console.error("Error fetching trending products:", err);
+    } finally {
+      if (showSpinner) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts(true);
+  }, []);
+
+  useEffect(() => {
+    fetchProducts(false);
   }, [i18n.language]);
 
   return (

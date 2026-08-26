@@ -290,7 +290,9 @@ function Cart() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
                         <h3 className="font-bold text-gray-800 text-sm sm:text-base truncate">
-                          {item.name}
+                          {i18n.language === "mr"
+                            ? (item.name_mr || item.name_en || item.name)
+                            : (item.name_en || item.name || item.name_mr)}
                         </h3>
                         {item.offerBadge && (
                           <span className="bg-rose-100 text-rose-700 text-[9px] sm:text-[10px] font-black px-2 py-0.5 rounded shadow-2xs uppercase tracking-wider">
@@ -528,80 +530,7 @@ function Cart() {
                 })()}
               </div>
 
-              {/* Payment Method Selection */}
-              <div className="border-t border-gray-100 mt-5 pt-5 space-y-3">
-                <h3 className="font-bold text-gray-800 text-sm flex items-center gap-2">
-                  <span>💳</span> {t("paymentMethod", { defaultValue: "Payment Method" })}
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("CASH")}
-                    className={`p-3 rounded-2xl border text-xs text-left transition-all font-bold ${
-                      paymentMethod === "CASH"
-                        ? "border-green-600 bg-green-50 text-green-800 shadow-sm ring-1 ring-green-600"
-                        : "border-gray-200 hover:border-green-300 text-gray-700 bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>💵 Pay at Counter</span>
-                      {paymentMethod === "CASH" && <span className="text-green-600 font-black">✓</span>}
-                    </div>
-                    <span className="text-[10px] text-gray-500 block font-normal mt-1">Cash on Pickup / COD</span>
-                  </button>
 
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod("UPI")}
-                    className={`p-3 rounded-2xl border text-xs text-left transition-all font-bold ${
-                      paymentMethod === "UPI"
-                        ? "border-green-600 bg-green-50 text-green-800 shadow-sm ring-1 ring-green-600"
-                        : "border-gray-200 hover:border-green-300 text-gray-700 bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>📲 Store UPI QR</span>
-                      {paymentMethod === "UPI" && <span className="text-green-600 font-black">✓</span>}
-                    </div>
-                    <span className="text-[10px] text-gray-500 block font-normal mt-1">GPay / PhonePe / Paytm</span>
-                  </button>
-                </div>
-
-                {/* UPI QR Display Card */}
-                {paymentMethod === "UPI" && (
-                  <div className="mt-3 bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 rounded-2xl p-4 text-center animate-fadeIn shadow-sm">
-                    <div className="flex items-center justify-center gap-1.5 text-purple-900 font-extrabold text-xs mb-2">
-                      <span>🛒 Dake Kirana Official UPI</span>
-                    </div>
-                    <div className="w-40 h-40 bg-white p-2.5 rounded-2xl shadow-md mx-auto border border-purple-100 flex items-center justify-center">
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=9604822360@ybl%26pn=Dake%20Kirana%20Store%26am=${cartDetails.grandTotal.toFixed(2)}%26cu=INR`}
-                        alt="Dake Kirana Store UPI QR Code"
-                        className="w-full h-full object-contain rounded-lg"
-                      />
-                    </div>
-                    <div className="mt-3 space-y-1">
-                      <p className="text-xs font-bold text-gray-800">
-                        Scan to Pay: <span className="text-purple-700 font-mono text-sm">9604822360@ybl</span>
-                      </p>
-                      <p className="text-[11px] text-gray-500">
-                        Merchant: <strong>Dake Kirana Store</strong> (Phone: 9604822360)
-                      </p>
-                      <div className="pt-2 flex justify-center gap-2">
-                        <span className="text-[10px] font-bold bg-white text-purple-700 px-2.5 py-1 rounded-full border border-purple-200 shadow-2xs">
-                          GPay
-                        </span>
-                        <span className="text-[10px] font-bold bg-white text-indigo-700 px-2.5 py-1 rounded-full border border-indigo-200 shadow-2xs">
-                          PhonePe
-                        </span>
-                        <span className="text-[10px] font-bold bg-white text-blue-700 px-2.5 py-1 rounded-full border border-blue-200 shadow-2xs">
-                          Paytm
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
 
               {checkoutError && (
                 <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm flex items-start gap-2 animate-shake">
@@ -699,7 +628,11 @@ function Cart() {
                     return (
                       <div key={item.id} className="flex items-start justify-between gap-2 text-sm py-2 border-b border-gray-50 last:border-0">
                         <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-gray-800 truncate">{item.name}</p>
+                          <p className="font-semibold text-gray-800 truncate">
+                            {i18n.language === "mr"
+                              ? (item.name_mr || item.name_en || item.name)
+                              : (item.name_en || item.name || item.name_mr)}
+                          </p>
                           <p className="text-xs text-gray-400">{item.unit} × {qty}</p>
                           {item.offerBadge && (
                             <span className="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded-full">

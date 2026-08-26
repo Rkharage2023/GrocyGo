@@ -69,8 +69,7 @@ function AdminOrders() {
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [paymentFilter, setPaymentFilter] = useState("ALL");
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState("ALL");
-  const [dateFilter, setDateFilter] = useState("ALL");
+  const [dateFilter, setDateFilter] = useState("TODAY");
 
   // Detail Modal State
   const [selectedOrderId, setSelectedOrderId] = useState(null);
@@ -506,7 +505,6 @@ function AdminOrders() {
           <div style="padding:16px 0;border-bottom:1px dashed #d1d5db;">
             <div class="flex justify-between text-xs"><span style="color:#6b7280;">${L.invoiceNo}:</span><span class="font-bold">${data.invoiceId}</span></div>
             <div class="flex justify-between text-xs" style="margin-top:4px;"><span style="color:#6b7280;">${L.dateTime}:</span><span>${data.dateTime}</span></div>
-            <div class="flex justify-between text-xs" style="margin-top:4px;"><span style="color:#6b7280;">${L.paymentMethod}:</span><span class="font-bold">${data.paymentMethod}</span></div>
             <div class="flex justify-between text-xs" style="margin-top:4px;"><span style="color:#6b7280;">${L.paymentStatus}:</span><span class="font-bold">${data.paymentStatus}</span></div>
           </div>
           <div style="padding:16px 0;border-bottom:1px dashed #d1d5db;">
@@ -703,7 +701,6 @@ function AdminOrders() {
     const matchesTab = activeTab === "ALL" || order.status === activeTab;
 
     const matchesPayment = paymentFilter === "ALL" || order.paymentStatus === paymentFilter;
-    const matchesPaymentMethod = paymentMethodFilter === "ALL" || order.paymentMethod === paymentMethodFilter;
 
     let matchesDate = true;
     if (dateFilter !== "ALL") {
@@ -733,7 +730,7 @@ function AdminOrders() {
       (order.User?.mobile || "").includes(term) ||
       (order.User?.email || "").toLowerCase().includes(term);
 
-    return matchesTab && matchesPayment && matchesPaymentMethod && matchesDate && matchesSearch;
+    return matchesTab && matchesPayment && matchesDate && matchesSearch;
   });
 
   if (loading) {
@@ -978,18 +975,7 @@ function AdminOrders() {
             </select>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Payment Method</label>
-            <select
-              value={paymentMethodFilter}
-              onChange={(e) => setPaymentMethodFilter(e.target.value)}
-              className="bg-gray-50 border border-gray-200 rounded-2xl px-4 py-3 text-xs font-bold outline-none focus:border-green-500 transition text-gray-700 cursor-pointer animate-none"
-            >
-              <option value="ALL">All Methods</option>
-              <option value="ONLINE">Online</option>
-              <option value="CASH">Cash</option>
-            </select>
-          </div>
+
 
           <div className="flex flex-col gap-1.5">
             <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Order Date</label>
@@ -1015,7 +1001,6 @@ function AdminOrders() {
                 <th scope="col" className="px-6 py-4">Customer</th>
                 <th scope="col" className="px-6 py-4">Amount</th>
                 <th scope="col" className="px-6 py-4 text-center">Order Status</th>
-                <th scope="col" className="px-6 py-4 text-center">Payment Method</th>
                 <th scope="col" className="px-6 py-4 text-center">Payment Status</th>
                 <th scope="col" className="px-6 py-4 text-center">Actions</th>
               </tr>
@@ -1079,17 +1064,7 @@ function AdminOrders() {
                         )}
                       </select>
                     </td>
-                    <td className="px-6 py-4 text-center">
-                      <select
-                        value={order.paymentMethod || "CASH"}
-                        onChange={(e) => handlePaymentMethodChange(order.id, e.target.value)}
-                        disabled={statusUpdateLoading[`meth-${order.id}`] || order.status === "COMPLETED" || order.status === "CANCELLED"}
-                        className={`text-xs font-bold rounded-full px-3 py-1.5 border outline-none cursor-pointer focus:ring-2 focus:ring-offset-1 transition ${order.paymentMethod === 'ONLINE' ? 'bg-blue-50 text-blue-700 border-blue-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}
-                      >
-                        <option value="CASH">CASH</option>
-                        <option value="ONLINE">ONLINE</option>
-                      </select>
-                    </td>
+
                     <td className="px-6 py-4 text-center">
                       <select
                         value={order.paymentStatus}
@@ -1640,17 +1615,7 @@ function AdminOrders() {
                           className="text-right bg-transparent border-b border-dashed border-transparent hover:border-amber-300 focus:border-amber-500 focus:bg-amber-50/50 px-1 py-0.5 outline-none transition w-1/2"
                         />
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-500 font-sans">{L.paymentMethod}:</span>
-                        <select
-                          value={billEditData.paymentMethod}
-                          onChange={e => updBill("paymentMethod", e.target.value)}
-                          className="text-right font-bold bg-transparent border-b border-dashed border-transparent hover:border-amber-300 focus:border-amber-500 focus:bg-amber-50/50 px-1 py-0.5 outline-none transition w-1/2 cursor-pointer appearance-none"
-                        >
-                          <option value="CASH">CASH</option>
-                          <option value="ONLINE">ONLINE</option>
-                        </select>
-                      </div>
+
                       <div className="flex justify-between items-center">
                         <span className="text-gray-500 font-sans">{L.paymentStatus}:</span>
                         <select

@@ -218,7 +218,9 @@ function AdminOffers() {
       });
       if (res.success) {
         toast.success(`Offer status changed to ${!offer.isActive ? "Active" : "Inactive"}`);
-        fetchOffers();
+        setOffers((prev) =>
+          prev.map((o) => (o.id === offer.id ? { ...o, isActive: !offer.isActive } : o))
+        );
       }
     } catch (err) {
       console.error(err);

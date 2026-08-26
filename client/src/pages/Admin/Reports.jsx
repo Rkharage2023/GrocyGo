@@ -14,7 +14,7 @@ function AdminReports() {
   defaultStartDate.setDate(defaultStartDate.getDate() - 6);
   const [startDate, setStartDate] = useState(defaultStartDate.toISOString().split("T")[0]);
   const [endDate, setEndDate] = useState(new Date().toISOString().split("T")[0]);
-  const [datePreset, setDatePreset] = useState("LAST_7_DAYS");
+  const [datePreset, setDatePreset] = useState("TODAY");
 
   const handleDatePresetChange = (preset) => {
     setDatePreset(preset);

@@ -171,9 +171,9 @@ function Products() {
     }
   };
 
-  const fetchProducts = async (params = {}) => {
+  const fetchProducts = async (params = {}, showSpinner = true) => {
     try {
-      setLoading(true);
+      if (showSpinner) setLoading(true);
       const [sort, order] = sortBy.split("-");
       const res = await getAllProducts({
         page,
@@ -193,7 +193,7 @@ function Products() {
     } catch (err) {
       console.error("Error fetching products:", err);
     } finally {
-      setLoading(false);
+      if (showSpinner) setLoading(false);
     }
   };
 
@@ -223,11 +223,17 @@ function Products() {
     fetchCategories();
     fetchAllProductsForSuggestions();
     fetchActiveOffers();
-  }, [i18n.language]);
+  }, []);
 
   useEffect(() => {
     fetchProducts();
-  }, [page, selectedCategory, search, sortBy, inStockOnly, i18n.language]);
+  }, [page, selectedCategory, search, sortBy, inStockOnly]);
+
+  useEffect(() => {
+    // Silent background reload on language change (no loading spinner)
+    fetchProducts({}, false);
+    fetchCategories();
+  }, [i18n.language]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -414,7 +420,7 @@ function Products() {
                       )}
                     </span>
                   )}
-                  {cat.name}
+                  {i18n.language === "mr" ? (cat.name_mr || cat.name_en || cat.name) : (cat.name_en || cat.name || cat.name_mr)}
                 </button>
               ))}
             </div>
@@ -434,7 +440,7 @@ function Products() {
               <option value="">{t("allProducts")}</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.id.toString()}>
-                  {cat.name}
+                  {i18n.language === "mr" ? (cat.name_mr || cat.name_en || cat.name) : (cat.name_en || cat.name || cat.name_mr)}
                 </option>
               ))}
             </select>

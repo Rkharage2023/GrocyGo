@@ -104,7 +104,11 @@ function ProductCard({ product }) {
           </button>
         </div>
 
-        <h3 className="mt-3 sm:mt-5 text-sm sm:text-lg font-bold text-gray-800 line-clamp-1 w-full">{product.name}</h3>
+        <h3 className="mt-3 sm:mt-5 text-sm sm:text-lg font-bold text-gray-800 line-clamp-1 w-full">
+          {i18n.language === "mr"
+            ? (product.name_mr || product.name_en || product.name)
+            : (product.name_en || product.name || product.name_mr)}
+        </h3>
 
         {/* Unit */}
         <div className="mt-1 flex items-center justify-center gap-1">

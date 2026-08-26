@@ -98,7 +98,7 @@ function Orders() {
 
   useEffect(() => {
     fetchOrders();
-  }, [i18n.language]);
+  }, []);
 
   // Fetch Order Details when selectedOrderId changes
   useEffect(() => {
@@ -125,7 +125,7 @@ function Orders() {
     };
 
     fetchDetails();
-  }, [selectedOrderId, i18n.language]);
+  }, [selectedOrderId]);
 
   const handleCloseDetailsModal = () => {
     if (isEditingItems) {

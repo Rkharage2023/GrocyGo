@@ -33,26 +33,31 @@ function Home() {
     }
   }, [user, navigate]);
 
-  useEffect(() => {
-    const fetchBanners = async () => {
-      try {
-        setLoadingOffers(true);
-        const res = await offerService.getHomepageOffers();
-        if (res.success) {
-          setOffersData({
-            heroBanners: res.data.heroBanners || [],
-            todayOffers: res.data.todayOffers || [],
-            festivalOffers: res.data.festivalOffers || [],
-            flashSales: res.data.flashSales || [],
-          });
-        }
-      } catch (err) {
-        console.error("Failed to load homepage banners:", err);
-      } finally {
-        setLoadingOffers(false);
+  const fetchBanners = async (showSpinner = true) => {
+    try {
+      if (showSpinner) setLoadingOffers(true);
+      const res = await offerService.getHomepageOffers();
+      if (res.success) {
+        setOffersData({
+          heroBanners: res.data.heroBanners || [],
+          todayOffers: res.data.todayOffers || [],
+          festivalOffers: res.data.festivalOffers || [],
+          flashSales: res.data.flashSales || [],
+        });
       }
-    };
-    fetchBanners();
+    } catch (err) {
+      console.error("Failed to load homepage banners:", err);
+    } finally {
+      if (showSpinner) setLoadingOffers(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBanners(true);
+  }, []);
+
+  useEffect(() => {
+    fetchBanners(false);
   }, [i18n.language]);
 
   const hasBanners = offersData.heroBanners.length > 0;

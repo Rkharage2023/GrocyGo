@@ -138,7 +138,9 @@ function AdminPickupSlots() {
           const res = await slotService.bulkUpdateSlotStatus(date, isActive);
           if (res.success) {
             toast.success(res.message || "Slot status updated successfully");
-            fetchSlots();
+            setSlots((prev) =>
+              prev.map((s) => (s.date === date ? { ...s, isActive } : s))
+            );
           } else {
             toast.error(res.message || "Failed to update slots status.");
           }
@@ -539,17 +541,19 @@ function AdminPickupSlots() {
                               </div>
                             </td>
                             <td className="py-3">
-                              <select
-                                value={slot.isActive ? "true" : "false"}
-                                onChange={async (e) => {
-                                  const newStatus = e.target.value === "true";
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  const newStatus = !slot.isActive;
                                   try {
                                     const res = await slotService.updateSlot(slot.id, {
                                       isActive: newStatus
                                     });
                                     if (res.success) {
                                       toast.success(`Slot status updated to ${newStatus ? "Active" : "Inactive"}`);
-                                      fetchSlots();
+                                      setSlots((prev) =>
+                                        prev.map((s) => (s.id === slot.id ? { ...s, isActive: newStatus } : s))
+                                      );
                                     } else {
                                       toast.error(res.message || "Failed to update slot status");
                                     }
@@ -558,15 +562,20 @@ function AdminPickupSlots() {
                                     toast.error(err.response?.data?.message || "Failed to update slot status");
                                   }
                                 }}
-                                className={`text-[10px] font-bold rounded-full px-2.5 py-1 border outline-none cursor-pointer focus:ring-2 focus:ring-offset-1 transition ${
+                                className={`relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold transition-all duration-200 border cursor-pointer select-none active:scale-95 ${
                                   slot.isActive
-                                    ? "bg-green-50 text-green-700 border-green-200 focus:ring-green-400"
-                                    : "bg-gray-50 text-gray-700 border-gray-200 focus:ring-gray-400"
+                                    ? "bg-green-50 text-green-700 border-green-200 hover:bg-green-100"
+                                    : "bg-red-50 text-red-700 border-red-200 hover:bg-red-100"
                                 }`}
+                                title={slot.isActive ? "Click to set Inactive" : "Click to set Active"}
                               >
-                                <option value="true">Active</option>
-                                <option value="false">Inactive</option>
-                              </select>
+                                <span
+                                  className={`w-2 h-2 rounded-full transition-colors ${
+                                    slot.isActive ? "bg-green-600 animate-pulse" : "bg-red-500"
+                                  }`}
+                                />
+                                <span>{slot.isActive ? "Active" : "Inactive"}</span>
+                              </button>
                             </td>
                             <td className="py-3 text-center">
                               <button

@@ -27,8 +27,9 @@ const getCloudinaryImages = async (req, res) => {
 
     const categories = [];
     const products = [];
+    const all = [];
 
-    result.resources.forEach((resource) => {
+    (result.resources || []).forEach((resource) => {
       let folder = resource.asset_folder || resource.folder || "";
       if (!folder && resource.public_id && resource.public_id.includes("/")) {
         const parts = resource.public_id.split("/");
@@ -39,28 +40,28 @@ const getCloudinaryImages = async (req, res) => {
       const folderLower = folder.toLowerCase();
       const filenameVal = resource.display_name || resource.filename || resource.public_id.split("/").pop();
 
-      if (folderLower.includes("categories")) {
-        categories.push({
-          public_id: resource.public_id,
-          url: resource.secure_url,
-          folderPath: folder,
-          folderName: folder.split("/").pop() || "",
-          filename: filenameVal,
-        });
-      } else if (folderLower.includes("products")) {
-        products.push({
-          public_id: resource.public_id,
-          url: resource.secure_url,
-          folderPath: folder,
-          folderName: folder.split("/").pop() || "",
-          filename: filenameVal,
-        });
+      const item = {
+        public_id: resource.public_id,
+        url: resource.secure_url,
+        folderPath: folder,
+        folderName: folder.split("/").pop() || "General",
+        filename: filenameVal,
+      };
+
+      all.push(item);
+
+      if (folderLower.includes("categor")) {
+        categories.push(item);
+      }
+      if (folderLower.includes("product")) {
+        products.push(item);
       }
     });
 
     const responseData = {
-      categories,
-      products,
+      categories: categories.length > 0 ? categories : all,
+      products: products.length > 0 ? products : all,
+      all: all,
     };
 
     // Cache the response

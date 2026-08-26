@@ -55,7 +55,7 @@ function PickupSlots() {
     };
 
     fetchBookings();
-  }, [i18n.language]);
+  }, []);
 
   const formatTime12h = (timeStr) => {
     if (!timeStr) return "";

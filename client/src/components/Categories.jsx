@@ -8,21 +8,27 @@ function Categories() {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const res = await API.get("/categories");
-        if (res.data.success) {
-          const activeCats = res.data.data.filter(c => c.isActive);
-          setCategories(activeCats);
-        }
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      } finally {
-        setLoading(false);
+  const fetchCategories = async (showSpinner = true) => {
+    try {
+      if (showSpinner) setLoading(true);
+      const res = await API.get("/categories");
+      if (res.data.success) {
+        const activeCats = res.data.data.filter(c => c.isActive);
+        setCategories(activeCats);
       }
-    };
-    fetchCategories();
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    } finally {
+      if (showSpinner) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories(true);
+  }, []);
+
+  useEffect(() => {
+    fetchCategories(false);
   }, [i18n.language]);
 
   return (

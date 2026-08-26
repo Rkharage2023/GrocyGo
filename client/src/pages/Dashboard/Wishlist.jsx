@@ -90,9 +90,15 @@ function Wishlist() {
                   </div>
 
                   <p className="text-xs font-bold text-green-600 uppercase tracking-wider">
-                    {product.Category?.name || "General"}
+                    {i18n.language === "mr"
+                      ? (product.Category?.name_mr || product.Category?.name_en || product.Category?.name || "General")
+                      : (product.Category?.name_en || product.Category?.name || product.Category?.name_mr || "General")}
                   </p>
-                  <h3 className="font-bold text-gray-800 text-lg mt-0.5 line-clamp-1">{product.name}</h3>
+                  <h3 className="font-bold text-gray-800 text-lg mt-0.5 line-clamp-1">
+                    {i18n.language === "mr"
+                      ? (product.name_mr || product.name_en || product.name)
+                      : (product.name_en || product.name || product.name_mr)}
+                  </h3>
                   <p className="text-xs text-gray-400 mt-1">{product.unit}</p>
 
                   <p className="text-xl font-extrabold text-green-700 mt-3">

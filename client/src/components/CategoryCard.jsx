@@ -1,8 +1,14 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 function CategoryCard({ category }) {
+  const { i18n } = useTranslation();
   const [imgError, setImgError] = useState(false);
+
+  const displayName = i18n.language === "mr"
+    ? (category.name_mr || category.name_en || category.name)
+    : (category.name_en || category.name || category.name_mr);
 
   return (
     <Link
@@ -41,7 +47,7 @@ function CategoryCard({ category }) {
           <img
             src={category.image}
             className="w-full h-full object-cover"
-            alt={category.name}
+            alt={displayName}
             onError={() => setImgError(true)}
           />
         ) : (
@@ -57,7 +63,7 @@ function CategoryCard({ category }) {
         text-gray-700
         "
       >
-        {category.name}
+        {displayName}
       </h3>
 
       {category.description && (
