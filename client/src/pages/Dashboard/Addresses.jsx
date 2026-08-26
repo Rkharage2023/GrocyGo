@@ -2,9 +2,12 @@ import { useState, useContext } from "react";
 import { FaMapMarkerAlt, FaPlus, FaEdit, FaTrash, FaCheck, FaBuilding } from "react-icons/fa";
 import { useTranslation } from "react-i18next";
 import { AuthContext } from "../../context/AuthContext";
+import { useToast } from "../../context/ToastContext";
+import ConfirmModal from "../../components/ConfirmModal";
 
 function Addresses() {
   const { t } = useTranslation();
+  const toastNotification = useToast();
   const { user, updateProfile } = useContext(AuthContext);
 
   const [openModal, setOpenModal] = useState(false);
@@ -14,6 +17,7 @@ function Addresses() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [toast, setToast] = useState("");
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -27,8 +31,7 @@ function Addresses() {
       setError(null);
       const fullAddress = `${addressLine.trim()}, ${city.trim()} - ${pincode.trim()}`;
       await updateProfile(user?.name || "User", fullAddress);
-      setToast("Delivery address updated successfully!");
-      setTimeout(() => setToast(""), 3000);
+      toastNotification.success("Delivery address updated successfully!");
       setOpenModal(false);
     } catch (err) {
       console.error(err);
@@ -38,16 +41,19 @@ function Addresses() {
     }
   };
 
-  const handleClear = async () => {
-    if (window.confirm("Are you sure you want to remove this delivery address?")) {
-      try {
-        await updateProfile(user?.name || "User", "");
-        setAddressLine("");
-        setToast("Address removed.");
-        setTimeout(() => setToast(""), 3000);
-      } catch (err) {
-        console.error(err);
-      }
+  const handleClearPrompt = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const handleClearConfirm = async () => {
+    setIsConfirmOpen(false);
+    try {
+      await updateProfile(user?.name || "User", "");
+      setAddressLine("");
+      toastNotification.success("Delivery address removed.");
+    } catch (err) {
+      console.error(err);
+      toastNotification.error("Failed to remove address.");
     }
   };
 
@@ -128,7 +134,7 @@ function Addresses() {
                 <FaEdit size={12} /> Edit
               </button>
               <button
-                onClick={handleClear}
+                onClick={handleClearPrompt}
                 className="flex items-center gap-1.5 text-xs font-bold text-red-600 hover:bg-red-50 px-3 py-2 rounded-xl transition border border-red-100"
               >
                 <FaTrash size={12} /> Remove
@@ -220,6 +226,18 @@ function Addresses() {
           </div>
         </div>
       )}
+
+      {/* Remove Address Confirmation Modal */}
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="Remove Delivery Address"
+        message="Are you sure you want to remove this saved delivery address?"
+        type="danger"
+        confirmText="Yes, Remove"
+        cancelText="Cancel"
+        onConfirm={handleClearConfirm}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
     </div>
   );
 }

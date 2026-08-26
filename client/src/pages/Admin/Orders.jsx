@@ -22,6 +22,7 @@ import {
 import * as orderService from "../../services/orderService";
 import API from "../../services/api";
 import { useToast } from "../../context/ToastContext";
+import ConfirmModal from "../../components/ConfirmModal";
 
 const formatTime12h = (timeStr) => {
   if (!timeStr) return "";
@@ -50,6 +51,14 @@ const formatDateDDMMYYYY = (dateVal) => {
 
 function AdminOrders() {
   const toast = useToast();
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "warning",
+    onConfirm: null,
+    onCancel: null,
+  });
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -263,32 +272,44 @@ function AdminOrders() {
       return;
     }
 
+    const performStatusUpdate = async () => {
+      setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+      try {
+        setStatusUpdateLoading(prev => ({ ...prev, [orderId]: true }));
+        const res = await orderService.updateOrderStatus(orderId, newStatus);
+        if (res.success) {
+          toast.success(`Order #${orderId} status updated to ${newStatus}`);
+          setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+          if (selectedOrderId === orderId) {
+            setOrderDetails(prev => prev ? { ...prev, status: newStatus } : null);
+          }
+        } else {
+          toast.error(res.message || "Failed to update order status");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error(err.response?.data?.message || err.message || "Failed to update order status");
+      } finally {
+        setStatusUpdateLoading(prev => ({ ...prev, [orderId]: false }));
+      }
+    };
+
     // Confirmation popup for marking as COMPLETED
     if (newStatus === "COMPLETED") {
-      const confirmComplete = window.confirm("Are you sure you want to mark this order as COMPLETED?");
-      if (!confirmComplete) {
-        return;
-      }
+      setConfirmConfig({
+        isOpen: true,
+        title: "Complete Order",
+        message: `Are you sure you want to mark Order #${orderId} as COMPLETED?`,
+        type: "info",
+        confirmText: "Yes, Mark Completed",
+        cancelText: "Cancel",
+        onConfirm: performStatusUpdate,
+        onCancel: () => setConfirmConfig(prev => ({ ...prev, isOpen: false })),
+      });
+      return;
     }
 
-    try {
-      setStatusUpdateLoading(prev => ({ ...prev, [orderId]: true }));
-      const res = await orderService.updateOrderStatus(orderId, newStatus);
-      if (res.success) {
-        toast.success(`Order #${orderId} status updated to ${newStatus}`);
-        setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-        if (selectedOrderId === orderId) {
-          setOrderDetails(prev => prev ? { ...prev, status: newStatus } : null);
-        }
-      } else {
-        toast.error(res.message || "Failed to update order status");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || err.message || "Failed to update order status");
-    } finally {
-      setStatusUpdateLoading(prev => ({ ...prev, [orderId]: false }));
-    }
+    await performStatusUpdate();
   };
 
   // Handle Payment Status Update
@@ -301,43 +322,56 @@ function AdminOrders() {
       return;
     }
 
+    const performPaymentUpdate = async () => {
+      setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+      try {
+        setStatusUpdateLoading(prev => ({ ...prev, [`pay-${orderId}`]: true }));
+        const res = await orderService.updateOrderPaymentStatus(orderId, newPaymentStatus);
+        if (res.success) {
+          toast.success(`Payment status updated to ${newPaymentStatus}`);
+          const updatedOrder = res.data;
+          setOrders(prev => prev.map(o => o.id === orderId ? {
+            ...o,
+            paymentStatus: updatedOrder?.paymentStatus || newPaymentStatus,
+            status: updatedOrder?.status || o.status
+          } : o));
+          if (selectedOrderId === orderId) {
+            setOrderDetails(prev => prev ? {
+              ...prev,
+              paymentStatus: updatedOrder?.paymentStatus || newPaymentStatus,
+              status: updatedOrder?.status || prev.status
+            } : null);
+          }
+        } else {
+          toast.error(res.message || "Failed to update payment status");
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error(err.response?.data?.message || err.message || "Failed to update payment status");
+      } finally {
+        setStatusUpdateLoading(prev => ({ ...prev, [`pay-${orderId}`]: false }));
+      }
+    };
+
     // Confirmation popup for marking payment status as FAILED
     if (newPaymentStatus === "FAILED") {
-      const confirmFailed = window.confirm("Are you sure you want to mark this order payment as FAILED?");
-      if (!confirmFailed) {
-        // Force state reload to revert the select element selection
-        setOrders(prev => [...prev]);
-        return;
-      }
+      setConfirmConfig({
+        isOpen: true,
+        title: "Mark Payment as Failed",
+        message: `Are you sure you want to mark payment for Order #${orderId} as FAILED?`,
+        type: "danger",
+        confirmText: "Yes, Mark Failed",
+        cancelText: "Cancel",
+        onConfirm: performPaymentUpdate,
+        onCancel: () => {
+          setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+          setOrders(prev => [...prev]);
+        },
+      });
+      return;
     }
 
-    try {
-      setStatusUpdateLoading(prev => ({ ...prev, [`pay-${orderId}`]: true }));
-      const res = await orderService.updateOrderPaymentStatus(orderId, newPaymentStatus);
-      if (res.success) {
-        toast.success(`Payment status updated to ${newPaymentStatus}`);
-        const updatedOrder = res.data;
-        setOrders(prev => prev.map(o => o.id === orderId ? {
-          ...o,
-          paymentStatus: updatedOrder?.paymentStatus || newPaymentStatus,
-          status: updatedOrder?.status || o.status
-        } : o));
-        if (selectedOrderId === orderId) {
-          setOrderDetails(prev => prev ? {
-            ...prev,
-            paymentStatus: updatedOrder?.paymentStatus || newPaymentStatus,
-            status: updatedOrder?.status || prev.status
-          } : null);
-        }
-      } else {
-        toast.error(res.message || "Failed to update payment status");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error(err.response?.data?.message || err.message || "Failed to update payment status");
-    } finally {
-      setStatusUpdateLoading(prev => ({ ...prev, [`pay-${orderId}`]: false }));
-    }
+    await performPaymentUpdate();
   };
 
   // Handle Payment Method Update
@@ -372,7 +406,7 @@ function AdminOrders() {
   const handlePrint = (billDetails, lang = "en") => {
     if (!billDetails) return;
     const printWindow = window.open("", "_blank", "width=800,height=900");
-    if (!printWindow) { alert("Please allow popups to print invoices"); return; }
+    if (!printWindow) { toast.warning("Please allow popups to print invoices"); return; }
 
     const isMr = lang === "mr";
     
@@ -1807,6 +1841,18 @@ function AdminOrders() {
           </div>
         );
       })()}
+
+      {/* Confirmation Modal for Order Status & Payment Actions */}
+      <ConfirmModal
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+        confirmText={confirmConfig.confirmText || "OK"}
+        cancelText={confirmConfig.cancelText || "Cancel"}
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={confirmConfig.onCancel || (() => setConfirmConfig(prev => ({ ...prev, isOpen: false })))}
+      />
     </div>
   );
 }

@@ -16,9 +16,11 @@ import {
 import * as orderService from "../../services/orderService";
 import * as slotService from "../../services/slotService";
 import API from "../../services/api";
+import { useToast } from "../../context/ToastContext";
 
 function Orders() {
   const { t, i18n } = useTranslation();
+  const toast = useToast();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -127,7 +129,7 @@ function Orders() {
 
   const handleCloseDetailsModal = () => {
     if (isEditingItems) {
-      alert(t("pleaseSaveDetails", { defaultValue: "Please save the details before closing, or click 'Cancel' inside the editor to discard." }));
+      toast.warning(t("pleaseSaveDetails", { defaultValue: "Please save the details before closing, or click 'Cancel' inside the editor to discard." }));
       return;
     }
     setSelectedOrderId(null);
@@ -402,7 +404,7 @@ function Orders() {
                   </div>
                 )}
               </div>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 overflow-x-auto pb-1 max-w-full shrink-0">
                 {["ALL", "PENDING", "CONFIRMED", "COMPLETED", "CANCELLED"].map((tab) => {
                   const getTabLabel = (tName) => {
                     switch (tName) {
@@ -418,9 +420,9 @@ function Orders() {
                     <button
                       key={tab}
                       onClick={() => setActiveTab(tab)}
-                      className={`px-4 py-2.5 rounded-2xl text-xs font-bold transition ${
+                      className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition shrink-0 ${
                         activeTab === tab
-                          ? "bg-green-600 text-white shadow-sm"
+                          ? "bg-green-600 text-white shadow-xs"
                           : "bg-gray-50 hover:bg-gray-100 text-gray-600 border border-gray-200"
                       }`}
                     >
@@ -433,16 +435,16 @@ function Orders() {
           </div>
 
           {filteredOrders.length === 0 ? (
-            <div className="bg-white rounded-3xl p-16 text-center border border-gray-100 shadow-sm">
-              <h3 className="text-xl font-bold text-gray-700">{t("noOrdersMatchFilter", { defaultValue: "No orders match your filter" })}</h3>
-              <p className="text-gray-400 mt-2">{t("tryDifferentFilter", { defaultValue: "Try a different status or clear the search." })}</p>
+            <div className="bg-white rounded-3xl p-10 sm:p-16 text-center border border-gray-100 shadow-sm">
+              <h3 className="text-lg sm:text-xl font-bold text-gray-700">{t("noOrdersMatchFilter", { defaultValue: "No orders match your filter" })}</h3>
+              <p className="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">{t("tryDifferentFilter", { defaultValue: "Try a different status or clear the search." })}</p>
             </div>
           ) : (
             <div className="grid gap-4">
               {filteredOrders.map((order) => (
                 <div 
                   key={order.id}
-                  className="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm hover:shadow-md transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-6"
+                  className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-gray-100 shadow-xs hover:shadow-md transition-all duration-200 flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6"
                 >
                   {/* Left Side: Order Meta */}
                   <div className="space-y-3">

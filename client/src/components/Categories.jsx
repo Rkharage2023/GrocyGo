@@ -26,13 +26,14 @@ function Categories() {
   }, [i18n.language]);
 
   return (
-    <section className="bg-white py-20">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="bg-white py-10 sm:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="text-center">
           <h2
             className="
-            text-4xl
-            font-bold
+            text-2xl
+            sm:text-4xl
+            font-extrabold
             text-gray-800
             "
           >
@@ -42,8 +43,8 @@ function Categories() {
           <p
             className="
             text-gray-500
-            mt-4
-            text-lg
+            mt-2 sm:mt-4
+            text-sm sm:text-lg
             "
           >
             {t("findEssentials")}
@@ -51,15 +52,16 @@ function Categories() {
         </div>
 
         {loading ? (
-          <div className="text-center mt-14 text-gray-500 text-lg">{t("loadingCategories")}</div>
+          <div className="text-center mt-8 sm:mt-14 text-gray-500 text-sm sm:text-lg">{t("loadingCategories")}</div>
         ) : (
           <div
             className="
             grid
             grid-cols-2
+            sm:grid-cols-3
             md:grid-cols-4
-            gap-8
-            mt-14
+            gap-3 sm:gap-8
+            mt-8 sm:mt-14
             "
           >
             {categories.map((category) => (

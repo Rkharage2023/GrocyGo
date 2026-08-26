@@ -64,6 +64,22 @@ const createProductValidation = [
     .withMessage("Keyword cannot be empty"),
 ];
 
+const updateProductValidation = [
+  body("name_en").optional().trim().notEmpty().withMessage("English product name cannot be empty"),
+  body("name_mr").optional().trim().notEmpty().withMessage("Marathi product name cannot be empty"),
+  body("description_en").optional().trim(),
+  body("description_mr").optional().trim(),
+  body("name").optional().trim().isLength({ min: 2, max: 100 }),
+  body("price").optional().isFloat({ gt: 0 }).withMessage("Selling price must be greater than 0"),
+  body("purchasePrice").optional().isFloat({ min: 0 }).withMessage("Purchase price cannot be negative"),
+  body("stock").optional().isInt({ min: 0 }).withMessage("Stock must be a non-negative whole integer"),
+  body("unit").optional().trim().notEmpty().withMessage("Unit cannot be empty"),
+  body("categoryId").optional().isInt().withMessage("Valid categoryId is required"),
+  body("keywords").optional().isArray().withMessage("Keywords must be an array of strings"),
+  body("keywords.*").optional().trim().notEmpty().withMessage("Keyword cannot be empty"),
+];
+
 module.exports = {
   createProductValidation,
+  updateProductValidation,
 };

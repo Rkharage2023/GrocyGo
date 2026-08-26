@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { FaTimes, FaCloud } from "react-icons/fa";
 import API from "../../services/api";
 import CloudinaryGalleryModal from "./CloudinaryGalleryModal";
+import { useToast } from "../../context/ToastContext";
 
 const UNIT_OPTIONS = [
   "1kg",
@@ -31,6 +32,7 @@ const UNIT_OPTIONS = [
 ];
 
 function EditProductModal({ isOpen, onClose, product, onRefresh, categories }) {
+  const toast = useToast();
   const [nameEn, setNameEn] = useState("");
   const [nameMr, setNameMr] = useState("");
   const [purchasePrice, setPurchasePrice] = useState("");
@@ -162,7 +164,7 @@ function EditProductModal({ isOpen, onClose, product, onRefresh, categories }) {
     const finalUnit = unit === "Other" ? customUnit.trim() : unit.trim();
 
     if (!nameEn.trim() || !nameMr.trim() || !purchasePrice || !price || !stock || !finalUnit || !categoryId || !image.trim()) {
-      alert("All fields marked with * are required");
+      toast.warning("All fields marked with * are required");
       return;
     }
 
@@ -171,22 +173,22 @@ function EditProductModal({ isOpen, onClose, product, onRefresh, categories }) {
     const stockNum = parseInt(stock);
 
     if (isNaN(purchasePriceNum) || purchasePriceNum < 0) {
-      alert("Purchase Price must be a positive number or 0");
+      toast.warning("Purchase Price must be a positive number or 0");
       return;
     }
 
     if (isNaN(priceNum) || priceNum <= 0) {
-      alert("Selling Price must be a number greater than 0");
+      toast.warning("Selling Price must be a number greater than 0");
       return;
     }
 
     if (purchasePriceNum > priceNum) {
-      alert("Purchase Price cannot be greater than Selling Price");
+      toast.warning("Purchase Price cannot be greater than Selling Price");
       return;
     }
 
     if (isNaN(stockNum) || stockNum < 0) {
-      alert("Stock must be a positive integer or 0");
+      toast.warning("Stock must be a positive integer or 0");
       return;
     }
 
@@ -207,12 +209,12 @@ function EditProductModal({ isOpen, onClose, product, onRefresh, categories }) {
         keywords,
       });
 
-      alert("Product updated successfully!");
+      toast.success("Product updated successfully!");
       onRefresh();
       onClose();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to update product");
+      toast.error(err.response?.data?.message || "Failed to update product");
     } finally {
       setLoading(false);
     }

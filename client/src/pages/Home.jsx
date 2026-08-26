@@ -74,29 +74,29 @@ function Home() {
 
       {/* ⚡ Flash Sale Section */}
       {offersData.flashSales.length > 0 && (
-        <section className="bg-red-50/40 py-16 border-y border-red-100">
-          <div className="max-w-7xl mx-auto px-6">
+        <section className="bg-red-50/40 py-10 sm:py-16 border-y border-red-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             {offersData.flashSales.map((sale) => {
               const saleProducts = sale.Products || [];
               if (saleProducts.length === 0) return null;
               return (
-                <div key={sale.id} className="space-y-8">
+                <div key={sale.id} className="space-y-6 sm:space-y-8">
                   <div className="flex justify-between items-end">
                     <div>
-                      <span className="bg-red-500 text-white text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-sm self-start tracking-wider w-max mb-3">
+                      <span className="bg-red-500 text-white text-[9px] sm:text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full flex items-center gap-1.5 shadow-2xs self-start tracking-wider w-max mb-2 sm:mb-3">
                         <FaBolt className="animate-bounce" /> {t("flashSale")}
                       </span>
-                      <h2 className="text-3xl font-extrabold text-gray-800 leading-tight">
+                      <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-800 leading-tight">
                         {sale.title}
                       </h2>
-                      <p className="text-gray-500 mt-2 text-sm">{sale.description || t("flashSaleDefaultDesc")}</p>
+                      <p className="text-gray-500 mt-1 sm:mt-2 text-xs sm:text-sm">{sale.description || t("flashSaleDefaultDesc")}</p>
                     </div>
-                    <Link to="/products" className="text-red-600 hover:text-red-700 font-bold text-sm shrink-0">
+                    <Link to="/products" className="text-red-600 hover:text-red-700 font-bold text-xs sm:text-sm shrink-0">
                       {t("viewAllDeals")} &rarr;
                     </Link>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                  <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-8">
                     {saleProducts.slice(0, 4).map((product) => {
                       // Apply parent flash sale badges/savings for listing
                       const discountValue = parseFloat(sale.discountValue || 0);

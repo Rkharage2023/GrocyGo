@@ -7,7 +7,7 @@ const {
   updateProduct,
   deleteProduct,
 } = require("../controllers/productController");
-const {createProductValidation} = require("../validations/productValidation");
+const { createProductValidation, updateProductValidation } = require("../validations/productValidation");
 
 const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
@@ -34,7 +34,7 @@ router.put(
   "/:id",
   authMiddleware,
   adminMiddleware,
-  createProductValidation,
+  updateProductValidation,
   validationMiddleware,
   updateProduct
 );

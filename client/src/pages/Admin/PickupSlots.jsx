@@ -13,8 +13,18 @@ import {
 } from "react-icons/fa";
 import * as slotService from "../../services/slotService";
 import * as orderService from "../../services/orderService";
+import { useToast } from "../../context/ToastContext";
+import ConfirmModal from "../../components/ConfirmModal";
 
 function AdminPickupSlots() {
+  const toast = useToast();
+  const [confirmConfig, setConfirmConfig] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "warning",
+    onConfirm: null,
+  });
   const [formData, setFormData] = useState({
     startDate: new Date().toISOString().split("T")[0],
     endDate: new Date().toISOString().split("T")[0],
@@ -67,80 +77,77 @@ function AdminPickupSlots() {
     await Promise.all([fetchSlots(), fetchOrders()]);
   };
 
-  const handleDeleteSlot = async (slotId) => {
-    setSuccessMsg(null);
-    setErrorMsg(null);
-    if (!window.confirm("Are you sure you want to permanently delete this slot?")) {
-      return;
-    }
-
-    try {
-      const res = await slotService.deleteSlot(slotId);
-      if (res.success) {
-        setSuccessMsg("Slot deleted successfully!");
-        fetchSlots();
-      } else {
-        setErrorMsg(res.message || "Failed to delete slot.");
+  const handleDeleteSlot = (slotId) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: "Delete Slot",
+      message: "Are you sure you want to permanently delete this pickup slot?",
+      type: "danger",
+      onConfirm: async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        try {
+          const res = await slotService.deleteSlot(slotId);
+          if (res.success) {
+            toast.success("Slot deleted successfully!");
+            fetchSlots();
+          } else {
+            toast.error(res.message || "Failed to delete slot.");
+          }
+        } catch (err) {
+          console.error("Failed to delete slot:", err);
+          toast.error(err.response?.data?.message || err.message || "An error occurred while deleting the slot.");
+        }
       }
-    } catch (err) {
-      console.error("Failed to delete slot:", err);
-      setErrorMsg(
-        err.response?.data?.message ||
-        err.message ||
-        "An error occurred while deleting the slot."
-      );
-    }
+    });
   };
 
-  const handleBulkDelete = async (date) => {
-    setSuccessMsg(null);
-    setErrorMsg(null);
-    if (!window.confirm(`Are you sure you want to permanently delete ALL slots for ${formatDateDDMMYYYY(date)}? Booked slots will be kept.`)) {
-      return;
-    }
-
-    try {
-      const res = await slotService.bulkDeleteSlots(date);
-      if (res.success) {
-        setSuccessMsg(res.message);
-        fetchSlots();
-      } else {
-        setErrorMsg(res.message || "Failed to delete slots.");
+  const handleBulkDelete = (date) => {
+    setConfirmConfig({
+      isOpen: true,
+      title: "Bulk Delete Slots",
+      message: `Are you sure you want to permanently delete ALL slots for ${formatDateDDMMYYYY(date)}? Booked slots will be kept.`,
+      type: "danger",
+      onConfirm: async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        try {
+          const res = await slotService.bulkDeleteSlots(date);
+          if (res.success) {
+            toast.success(res.message || "Slots deleted successfully");
+            fetchSlots();
+          } else {
+            toast.error(res.message || "Failed to delete slots.");
+          }
+        } catch (err) {
+          console.error("Failed to delete slots:", err);
+          toast.error(err.response?.data?.message || err.message || "An error occurred while deleting slots.");
+        }
       }
-    } catch (err) {
-      console.error("Failed to delete slots:", err);
-      setErrorMsg(
-        err.response?.data?.message ||
-        err.message ||
-        "An error occurred while deleting slots."
-      );
-    }
+    });
   };
 
-  const handleBulkStatusToggle = async (date, isActive) => {
-    setSuccessMsg(null);
-    setErrorMsg(null);
+  const handleBulkStatusToggle = (date, isActive) => {
     const actionText = isActive ? "activate" : "deactivate";
-    if (!window.confirm(`Are you sure you want to ${actionText} ALL slots for ${formatDateDDMMYYYY(date)}?`)) {
-      return;
-    }
-
-    try {
-      const res = await slotService.bulkUpdateSlotStatus(date, isActive);
-      if (res.success) {
-        setSuccessMsg(res.message);
-        fetchSlots();
-      } else {
-        setErrorMsg(res.message || "Failed to update slots status.");
+    setConfirmConfig({
+      isOpen: true,
+      title: `${isActive ? "Activate" : "Deactivate"} All Slots`,
+      message: `Are you sure you want to ${actionText} ALL slots for ${formatDateDDMMYYYY(date)}?`,
+      type: isActive ? "info" : "warning",
+      onConfirm: async () => {
+        setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+        try {
+          const res = await slotService.bulkUpdateSlotStatus(date, isActive);
+          if (res.success) {
+            toast.success(res.message || "Slot status updated successfully");
+            fetchSlots();
+          } else {
+            toast.error(res.message || "Failed to update slots status.");
+          }
+        } catch (err) {
+          console.error("Failed to update slots status:", err);
+          toast.error(err.response?.data?.message || err.message || "An error occurred while updating slots status.");
+        }
       }
-    } catch (err) {
-      console.error("Failed to update slots status:", err);
-      setErrorMsg(
-        err.response?.data?.message ||
-        err.message ||
-        "An error occurred while updating slots status."
-      );
-    }
+    });
   };
 
   useEffect(() => {
@@ -541,13 +548,14 @@ function AdminPickupSlots() {
                                       isActive: newStatus
                                     });
                                     if (res.success) {
+                                      toast.success(`Slot status updated to ${newStatus ? "Active" : "Inactive"}`);
                                       fetchSlots();
                                     } else {
-                                      alert(res.message || "Failed to update slot status");
+                                      toast.error(res.message || "Failed to update slot status");
                                     }
                                   } catch (err) {
                                     console.error(err);
-                                    alert(err.response?.data?.message || "Failed to update slot status");
+                                    toast.error(err.response?.data?.message || "Failed to update slot status");
                                   }
                                 }}
                                 className={`text-[10px] font-bold rounded-full px-2.5 py-1 border outline-none cursor-pointer focus:ring-2 focus:ring-offset-1 transition ${
@@ -660,6 +668,17 @@ function AdminPickupSlots() {
           </div>
         </div>
       </div>
+
+      <ConfirmModal
+        isOpen={confirmConfig.isOpen}
+        title={confirmConfig.title}
+        message={confirmConfig.message}
+        type={confirmConfig.type}
+        confirmText="Confirm"
+        cancelText="Cancel"
+        onConfirm={confirmConfig.onConfirm}
+        onCancel={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+      />
     </div>
   );
 }

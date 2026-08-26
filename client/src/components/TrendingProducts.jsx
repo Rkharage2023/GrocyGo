@@ -26,14 +26,15 @@ function TrendingProducts() {
   }, [i18n.language]);
 
   return (
-    <section className="bg-green-50 py-20">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="flex justify-between items-center">
+    <section className="bg-green-50 py-10 sm:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <div className="flex justify-between items-end">
           <div>
             <h2
               className="
-              text-4xl
-              font-bold
+              text-2xl
+              sm:text-4xl
+              font-extrabold
               text-gray-800
               "
             >
@@ -43,7 +44,8 @@ function TrendingProducts() {
             <p
               className="
               text-gray-500
-              mt-3
+              mt-1.5 sm:mt-3
+              text-xs sm:text-base
               "
             >
               {t("trendingProductsDesc")}
@@ -53,33 +55,28 @@ function TrendingProducts() {
           <Link
             to="/products"
             className="
-            hidden
-            md:block
-            border
-            border-green-600
             text-green-700
-            px-6
-            py-3
-            rounded-xl
-            font-medium
-            hover:bg-green-100
+            font-bold
+            text-xs sm:text-sm
+            hover:underline
+            shrink-0
             "
           >
-            {t("viewAll")}
+            {t("viewAll")} &rarr;
           </Link>
         </div>
 
         {loading ? (
-          <div className="text-center mt-14 text-gray-500 text-lg">{t("loadingProducts")}</div>
+          <div className="text-center mt-8 sm:mt-14 text-gray-500 text-sm sm:text-lg">{t("loadingProducts")}</div>
         ) : (
           <div
             className="
             grid
-            grid-cols-1
+            grid-cols-2
             sm:grid-cols-2
             lg:grid-cols-4
-            gap-8
-            mt-14
+            gap-3 sm:gap-8
+            mt-8 sm:mt-14
             "
           >
             {products.map((product) => (

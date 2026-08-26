@@ -87,13 +87,14 @@ function CategoryTable({ categories, loading, onRefresh }) {
                         isActive: newStatus
                       });
                       if (res.data.success) {
+                        toast.success(`Category status updated to ${newStatus ? "Active" : "Inactive"}`);
                         onRefresh();
                       } else {
-                        alert(res.data.message || "Failed to update category status");
+                        toast.error(res.data.message || "Failed to update category status");
                       }
                     } catch (err) {
                       console.error(err);
-                      alert(err.response?.data?.message || "Failed to update category status");
+                      toast.error(err.response?.data?.message || "Failed to update category status");
                     }
                   }}
                   className={`text-xs font-bold rounded-full px-3 py-1.5 border outline-none cursor-pointer focus:ring-2 focus:ring-offset-1 transition ${

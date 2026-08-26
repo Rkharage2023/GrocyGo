@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { FaTimes, FaSearch, FaFolderOpen, FaCloud } from "react-icons/fa";
 import API from "../../services/api";
+import { useToast } from "../../context/ToastContext";
 
 function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "products", currentCategoryName = "" }) {
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState(initialTab); // "products" or "categories"
   const [images, setImages] = useState({ categories: [], products: [] });
   const [loading, setLoading] = useState(false);
@@ -58,7 +60,7 @@ function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "produ
       });
 
       if (res.data.success) {
-        alert("Image uploaded successfully!");
+        toast.success("Image uploaded successfully!");
         await fetchCloudinaryImages();
         if (res.data.data.url) {
           onSelect(res.data.data.url);
@@ -66,7 +68,7 @@ function CloudinaryGalleryModal({ isOpen, onClose, onSelect, initialTab = "produ
       }
     } catch (err) {
       console.error("Failed to upload image:", err);
-      alert(err.response?.data?.message || "Failed to upload image.");
+      toast.error(err.response?.data?.message || "Failed to upload image.");
     } finally {
       setUploading(false);
     }

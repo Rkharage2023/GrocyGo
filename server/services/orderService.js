@@ -25,11 +25,8 @@ const checkout = async (userId, slotId, paymentMethod = "CASH") => {
       throw new AppError("Slot is required", 400);
     }
 
-    if (paymentMethod !== "CASH") {
-      throw new AppError(
-        "Only Cash On Pickup is available",
-        400
-      );
+    if (paymentMethod !== "CASH" && paymentMethod !== "UPI") {
+      throw new AppError("Invalid payment method selected", 400);
     }
 
     const slot = await Slot.findOne({

@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { FaTimes, FaCloud } from "react-icons/fa";
 import API from "../../services/api";
 import CloudinaryGalleryModal from "./CloudinaryGalleryModal";
+import { useToast } from "../../context/ToastContext";
 
 function EditCategoryModal({ isOpen, onClose, category, onRefresh }) {
+  const toast = useToast();
   const [nameEn, setNameEn] = useState("");
   const [nameMr, setNameMr] = useState("");
   const [description, setDescription] = useState("");
@@ -81,7 +83,7 @@ function EditCategoryModal({ isOpen, onClose, category, onRefresh }) {
     e.preventDefault();
 
     if (!nameEn.trim() || !nameMr.trim()) {
-      alert("English and Marathi category names are required");
+      toast.warning("English and Marathi category names are required");
       return;
     }
 
@@ -94,12 +96,12 @@ function EditCategoryModal({ isOpen, onClose, category, onRefresh }) {
         image: image.trim() || "📦",
       });
 
-      alert("Category updated successfully!");
+      toast.success("Category updated successfully!");
       onRefresh();
       onClose();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to update category");
+      toast.error(err.response?.data?.message || "Failed to update category");
     } finally {
       setLoading(false);
     }

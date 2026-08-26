@@ -1,22 +1,31 @@
-import { useContext } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { FaUserCircle, FaPhoneAlt, FaEdit, FaShieldAlt } from "react-icons/fa";
+import { useToast } from "../../context/ToastContext";
+import ConfirmModal from "../../components/ConfirmModal";
 
 function Settings() {
   const { t } = useTranslation();
+  const toast = useToast();
   const { user, logoutAll } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
-  const handleLogoutAll = async () => {
-    if (window.confirm(t("confirmLogoutAll", { defaultValue: "Are you sure you want to log out from all devices? This will invalidate all your other active sessions." }))) {
-      try {
-        await logoutAll();
-        navigate("/login");
-      } catch (err) {
-        console.error("Failed to logout from all devices", err);
-      }
+  const handleLogoutAllPrompt = () => {
+    setIsConfirmOpen(true);
+  };
+
+  const handleLogoutAllConfirm = async () => {
+    setIsConfirmOpen(false);
+    try {
+      await logoutAll();
+      toast.success("Logged out from all devices successfully.");
+      navigate("/login");
+    } catch (err) {
+      console.error("Failed to logout from all devices", err);
+      toast.error("Failed to log out from all devices.");
     }
   };
 
@@ -81,7 +90,7 @@ function Settings() {
           {t("securitySessionsDesc", { defaultValue: "Suspect unauthorized access? You can force log out from all active sessions on other devices." })}
         </p>
         <button
-          onClick={handleLogoutAll}
+          onClick={handleLogoutAllPrompt}
           className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold transition"
         >
           {t("logoutAllDevices", { defaultValue: "Logout From All Devices" })}
@@ -90,6 +99,17 @@ function Settings() {
 
       {/* App Preferences */}
       <AppPreferencesBlock t={t} />
+
+      <ConfirmModal
+        isOpen={isConfirmOpen}
+        title="Logout From All Devices"
+        message="Are you sure you want to log out from all devices? This will invalidate all your other active sessions."
+        type="danger"
+        confirmText="Yes, Logout All"
+        cancelText="Cancel"
+        onConfirm={handleLogoutAllConfirm}
+        onCancel={() => setIsConfirmOpen(false)}
+      />
     </div>
   );
 }

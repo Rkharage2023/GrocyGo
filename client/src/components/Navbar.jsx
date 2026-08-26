@@ -52,24 +52,23 @@ function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-white shadow-sm border-b border-green-100">
-      <div className="max-w-7xl mx-auto px-5">
-        <div className="h-20 flex items-center justify-between gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-5">
+        <div className="h-16 sm:h-20 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-11 h-11 rounded-full bg-green-600 flex items-center justify-center text-white text-xl">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-green-600 flex items-center justify-center text-white text-lg sm:text-xl shadow-xs">
               🛒
             </div>
 
             <div>
-              <h1 className="text-2xl font-bold text-green-700">{t("storeName", { defaultValue: "Dake Kirana Store" })}</h1>
-
-              <p className="text-xs text-gray-500">{t("freshQueueFree")}</p>
+              <h1 className="text-base sm:text-2xl font-black text-green-700 leading-tight">
+                {t("storeName", { defaultValue: "Dake Kirana Store" })}
+              </h1>
+              <p className="text-[10px] sm:text-xs text-gray-500 hidden xs:block">{t("freshQueueFree")}</p>
             </div>
           </Link>
 
-
-
-          {/* Right Side */}
+          {/* Right Side (Desktop) */}
           <div className="hidden md:flex items-center gap-4">
             <Link
               to="/products"
@@ -81,16 +80,7 @@ function Navbar() {
             {!isLoggedIn ? (
               <Link
                 to="/login"
-                className="
-                px-6
-                py-2.5
-                bg-green-600
-                text-white
-                font-medium
-                rounded-full
-                hover:bg-green-700
-                transition
-                "
+                className="px-6 py-2.5 bg-green-600 text-white font-medium rounded-full hover:bg-green-700 transition"
               >
                 {t("login")}
               </Link>
@@ -103,139 +93,65 @@ function Navbar() {
                 {!isDashboardOrAdmin && (
                   <Link
                     to="/cart"
-                    className="
-                      relative
-                      p-3
-                      rounded-full
-                      hover:bg-green-50
-                      transition
-                    "
+                    className="relative p-3 rounded-full hover:bg-green-50 transition text-gray-700"
                   >
-                    <ShoppingCart size={24} className="text-green-700" />
-
+                    <ShoppingCart size={22} className="text-green-700" />
                     {cartCount > 0 && (
-                      <span
-                        className="
-                          absolute
-                          -top-1
-                          -right-1
-                          bg-orange-500
-                          text-white
-                          text-xs
-                          w-5
-                          h-5
-                          rounded-full
-                          flex
-                          items-center
-                          justify-center
-                        "
-                      >
+                      <span className="absolute top-1.5 right-1.5 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center font-bold">
                         {cartCount}
                       </span>
                     )}
                   </Link>
                 )}
 
-                {/* Profile */}
+                {/* Profile dropdown */}
                 <div className="relative" ref={profileRef}>
                   <button
                     onClick={() => setOpenProfile(!openProfile)}
-                    className="
-                      w-11
-                      h-11
-                      rounded-full
-                      bg-green-100
-                      flex
-                      items-center
-                      justify-center
-                      hover:bg-green-200
-                      transition
-                    "
+                    className="flex items-center gap-2 p-1.5 rounded-full hover:bg-green-50 transition"
                   >
-                    <FaUserCircle size={28} className="text-green-700" />
+                    <FaUserCircle className="text-3xl text-green-700" />
                   </button>
 
-                  {/* Dropdown */}
                   {openProfile && (
-                    <div
-                      className="
-                        absolute
-                        right-0
-                        mt-3
-                        w-56
-                        bg-white
-                        rounded-2xl
-                        shadow-xl
-                        border
-                        border-green-100
-                        overflow-hidden
-                      "
-                    >
-                      <Link
-                        to="/products"
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                          px-5
-                          py-4
-                          hover:bg-green-50
-                          transition
-                        "
-                      >
-                        <FaShoppingBag className="text-green-700" />
-                        {t("shop")}
-                      </Link>
+                    <div className="absolute right-0 mt-3 w-56 bg-white rounded-2xl shadow-xl border border-gray-100 py-2 z-50 animate-fadeIn divide-y divide-gray-50">
+                      <div className="px-5 py-3">
+                        <p className="font-bold text-gray-800 truncate">{user?.name}</p>
+                        <p className="text-xs text-gray-400 font-mono mt-0.5">{user?.mobile}</p>
+                      </div>
 
-                      <Link
-                        to="/profile"
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                          px-5
-                          py-4
-                          hover:bg-green-50
-                          transition
-                        "
-                      >
-                        <FaUser className="text-green-700" />
-                        {t("profile")}
-                      </Link>
+                      <div className="py-1">
+                        <Link
+                          to="/profile"
+                          onClick={() => setOpenProfile(false)}
+                          className="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-green-50 transition"
+                        >
+                          <FaUser className="text-green-700" />
+                          {t("profile")}
+                        </Link>
 
-                      <Link
-                        to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
-                        className="
-                          flex
-                          items-center
-                          gap-3
-                          px-5
-                          py-4
-                          hover:bg-green-50
-                          transition
-                        "
-                      >
-                        <FaTachometerAlt className="text-green-700" />
-                        {user?.role === "ADMIN" ? t("adminPanel", { defaultValue: "Admin Panel" }) : t("dashboard")}
-                      </Link>
+                        <Link
+                          to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
+                          onClick={() => setOpenProfile(false)}
+                          className="flex items-center gap-3 px-5 py-2.5 text-sm text-gray-700 hover:bg-green-50 transition"
+                        >
+                          <FaTachometerAlt className="text-green-700" />
+                          {user?.role === "ADMIN" ? t("adminPanel", { defaultValue: "Admin Panel" }) : t("dashboard")}
+                        </Link>
+                      </div>
 
-                      <button
-                        onClick={handleLogout}
-                        className="
-                          w-full
-                          flex
-                          items-center
-                          gap-3
-                          px-5
-                          py-4
-                          text-red-500
-                          hover:bg-red-50
-                          transition
-                        "
-                      >
-                        <FaSignOutAlt />
-                        {t("logout")}
-                      </button>
+                      <div className="pt-1">
+                        <button
+                          onClick={() => {
+                            setOpenProfile(false);
+                            handleLogout();
+                          }}
+                          className="w-full flex items-center gap-3 px-5 py-2.5 text-sm text-red-500 hover:bg-red-50 transition"
+                        >
+                          <FaSignOutAlt />
+                          {t("logout")}
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -244,18 +160,18 @@ function Navbar() {
           </div>
 
           {/* Mobile Right Side Group */}
-          <div className="flex md:hidden items-center gap-2 sm:gap-4">
+          <div className="flex md:hidden items-center gap-1.5 sm:gap-3">
             {isLoggedIn && (
               <>
                 <NotificationBell />
                 {!isDashboardOrAdmin && (
                   <Link
                     to="/cart"
-                    className="relative p-2 rounded-full hover:bg-green-50 transition"
+                    className="relative p-2 rounded-full hover:bg-green-50 transition text-gray-700"
                   >
-                    <ShoppingCart size={24} className="text-green-700" />
+                    <ShoppingCart size={22} className="text-green-700" />
                     {cartCount > 0 && (
-                      <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 bg-orange-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
                         {cartCount}
                       </span>
                     )}
@@ -266,47 +182,30 @@ function Navbar() {
 
             <button
               onClick={() => setMobileMenu(!mobileMenu)}
-              className="md:hidden"
+              className="p-1.5 rounded-xl hover:bg-gray-100 text-green-700 transition"
+              aria-label="Toggle Navigation Menu"
             >
-              <Menu size={28} className="text-green-700" />
+              <Menu size={24} />
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Drawer Menu */}
         {mobileMenu && (
-          <div className="md:hidden py-4 border-t">
-
-
+          <div className="md:hidden py-4 border-t border-gray-100 animate-fadeIn">
             {!isLoggedIn ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Link
                   to="/products"
-                  className="
-                    block
-                    w-full
-                    text-center
-                    py-3
-                    rounded-xl
-                    bg-green-50
-                    text-green-700
-                    font-medium
-                  "
+                  onClick={() => setMobileMenu(false)}
+                  className="block w-full text-center py-3 rounded-xl bg-green-50 text-green-700 font-bold text-sm"
                 >
                   🛍️ {t("shop")}
                 </Link>
                 <Link
                   to="/login"
-                  className="
-                    block
-                    w-full
-                    text-center
-                    py-3
-                    rounded-xl
-                    bg-green-600
-                    text-white
-                    font-medium
-                  "
+                  onClick={() => setMobileMenu(false)}
+                  className="block w-full text-center py-3 rounded-xl bg-green-600 text-white font-bold text-sm shadow-sm"
                 >
                   {t("login")}
                 </Link>
@@ -315,27 +214,49 @@ function Navbar() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3">
-                <div className="pb-2 border-b border-gray-100 mb-2 flex justify-center text-gray-800">
+              <div className="space-y-2">
+                <div className="pb-3 border-b border-gray-100 mb-2 flex items-center justify-between">
+                  <div className="text-left">
+                    <p className="font-bold text-gray-800 text-sm">{user?.name}</p>
+                    <p className="text-[11px] text-gray-400 font-mono">{user?.mobile}</p>
+                  </div>
                   <LanguageSwitcher />
                 </div>
 
                 <Link
                   to="/products"
-                  className="block font-medium text-gray-700 hover:text-green-600 transition"
+                  onClick={() => setMobileMenu(false)}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 transition"
                 >
                   🛍️ {t("shop")}
                 </Link>
 
-                <Link to={user?.role === "ADMIN" ? "/admin" : "/dashboard"} className="block font-medium">
+                <Link
+                  to={user?.role === "ADMIN" ? "/admin" : "/dashboard"}
+                  onClick={() => setMobileMenu(false)}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 transition"
+                >
+                  <FaTachometerAlt className="text-green-700" />
                   {user?.role === "ADMIN" ? t("adminPanel", { defaultValue: "Admin Panel" }) : t("dashboard")}
                 </Link>
 
-                <Link to="/profile" className="block font-medium">
+                <Link
+                  to="/profile"
+                  onClick={() => setMobileMenu(false)}
+                  className="flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-gray-700 hover:bg-green-50 transition"
+                >
+                  <FaUser className="text-green-700" />
                   {t("profile")}
                 </Link>
 
-                <button onClick={handleLogout} className="text-red-500 block font-medium w-full text-left">
+                <button
+                  onClick={() => {
+                    setMobileMenu(false);
+                    handleLogout();
+                  }}
+                  className="w-full flex items-center gap-2.5 py-2.5 px-3 rounded-xl text-sm font-semibold text-red-500 hover:bg-red-50 transition text-left"
+                >
+                  <FaSignOutAlt />
                   {t("logout")}
                 </button>
               </div>

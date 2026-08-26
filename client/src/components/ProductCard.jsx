@@ -3,10 +3,11 @@ import { ShoppingCart, Heart } from "lucide-react";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
 import { WishlistContext } from "../context/WishlistContext";
-import { useTranslation } from "react-i18next";
+import { useToast } from "../context/ToastContext";
 
 function ProductCard({ product }) {
   const { t, i18n } = useTranslation();
+  const toast = useToast();
   const { isLoggedIn } = useContext(AuthContext);
   const { addToCart } = useContext(CartContext);
   const { isWishlisted, toggleWishlist } = useContext(WishlistContext);
@@ -34,7 +35,7 @@ function ProductCard({ product }) {
 
   const handleAdd = async () => {
     if (!isLoggedIn) {
-      alert("Please login to add items to cart!");
+      toast.warning("Please login to add items to cart!");
       return;
     }
     if (product.stock === 0) return;
@@ -51,35 +52,35 @@ function ProductCard({ product }) {
   };
 
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-2 flex flex-col">
+    <div className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-5 shadow-xs hover:shadow-xl transition-all duration-300 hover:-translate-y-1.5 flex flex-col justify-between border border-gray-100 h-full">
       {/* Badges */}
-      <div className="flex justify-between items-center mb-1 w-full">
+      <div className="flex justify-between items-center mb-1 w-full gap-1">
         {product.offerBadge ? (
-          <span className="bg-rose-600 text-white text-[10px] px-2.5 py-1 rounded-full font-extrabold tracking-wide uppercase shadow-sm">
+          <span className="bg-rose-600 text-white text-[8px] sm:text-[10px] px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded-full font-extrabold tracking-wide uppercase shadow-2xs truncate">
             {translateBadge(product.offerBadge)}
           </span>
         ) : (
           <span />
         )}
         {product.stock <= 5 && product.stock > 0 && (
-          <span className="bg-orange-100 text-orange-600 text-xs px-3 py-1 rounded-full font-medium">
+          <span className="bg-orange-100 text-orange-600 text-[9px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-bold shrink-0">
             {t("lowStock")}
           </span>
         )}
         {product.stock === 0 && (
-          <span className="bg-red-100 text-red-600 text-xs px-3 py-1 rounded-full font-medium">
+          <span className="bg-red-100 text-red-600 text-[9px] sm:text-xs px-2 sm:px-3 py-0.5 sm:py-1 rounded-full font-bold shrink-0">
             {t("outOfStock")}
           </span>
         )}
       </div>
 
       {/* Product image + info */}
-      <div className="text-center mt-2 flex-1 flex flex-col items-center">
-        <div className="w-32 h-32 flex items-center justify-center overflow-hidden rounded-2xl bg-gray-50 border shadow-sm relative group">
+      <div className="text-center mt-1 sm:mt-2 flex-1 flex flex-col items-center">
+        <div className="w-24 h-24 sm:w-32 sm:h-32 flex items-center justify-center overflow-hidden rounded-xl sm:rounded-2xl bg-gray-50 border border-gray-100 shadow-2xs relative group">
           {product.image && product.image.startsWith("http") ? (
             <img src={product.image} className="w-full h-full object-cover" alt={product.name} />
           ) : (
-            <span className="text-7xl">{product.image || "📦"}</span>
+            <span className="text-5xl sm:text-7xl">{product.image || "📦"}</span>
           )}
 
           <button
@@ -87,20 +88,20 @@ function ProductCard({ product }) {
               e.stopPropagation();
               toggleWishlist(product.id);
             }}
-            className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-md transition-all shadow-sm ${
+            className={`absolute top-1.5 right-1.5 sm:top-2 sm:right-2 p-1.5 sm:p-2 rounded-full backdrop-blur-md transition-all shadow-xs ${
               activeWish ? "bg-rose-50 text-rose-600 border border-rose-200" : "bg-white/80 text-gray-400 hover:text-rose-500"
             }`}
             title={activeWish ? "Remove from wishlist" : "Add to wishlist"}
           >
-            <Heart size={15} fill={activeWish ? "currentColor" : "none"} />
+            <Heart size={14} className="sm:w-4 sm:h-4" fill={activeWish ? "currentColor" : "none"} />
           </button>
         </div>
 
-        <h3 className="mt-5 text-lg font-bold text-gray-800 line-clamp-1">{product.name}</h3>
+        <h3 className="mt-3 sm:mt-5 text-sm sm:text-lg font-bold text-gray-800 line-clamp-1 w-full">{product.name}</h3>
 
-        {/* Unit & Loose badge */}
-        <div className="mt-1 flex items-center justify-center gap-1.5">
-          <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
+        {/* Unit */}
+        <div className="mt-1 flex items-center justify-center gap-1">
+          <span className="text-[10px] sm:text-xs font-semibold px-2 sm:px-2.5 py-0.5 rounded-full bg-gray-100 text-gray-600">
             {product.unit === "Loose (सुट्टा)" || product.unit === "Loose"
               ? (i18n.language === "mr" ? "सुट्टा किराणा" : "Loose Kirana")
               : product.unit}
@@ -108,40 +109,40 @@ function ProductCard({ product }) {
         </div>
 
         {/* Pricing (MRP vs Kirana Selling Price) */}
-        <div className="mt-3 flex flex-col items-center">
+        <div className="mt-2 sm:mt-3 flex flex-col items-center">
           {product.discount > 0 ? (
             <div className="space-y-0.5 text-center">
-              <div className="flex items-center gap-2 justify-center">
-                <span className="line-through text-gray-400 text-xs font-medium">
-                  M.R.P. ₹{parseFloat(product.originalPrice).toFixed(2)}
+              <div className="flex items-center gap-1.5 sm:gap-2 justify-center flex-wrap">
+                <span className="line-through text-gray-400 text-[10px] sm:text-xs font-medium">
+                  ₹{parseFloat(product.originalPrice).toFixed(0)}
                 </span>
-                <span className="text-2xl font-black text-green-700">
-                  ₹{parseFloat(product.finalPrice).toFixed(2)}
+                <span className="text-base sm:text-2xl font-black text-green-700">
+                  ₹{parseFloat(product.finalPrice).toFixed(0)}
                 </span>
               </div>
-              <p className="text-[11px] bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block shadow-sm">
-                {t("savePrefix", { value: parseFloat(product.discount).toFixed(2), defaultValue: `Save ₹${parseFloat(product.discount).toFixed(2)}` })}
+              <p className="text-[9px] sm:text-[11px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block shadow-2xs">
+                {t("savePrefix", { value: parseFloat(product.discount).toFixed(0), defaultValue: `Save ₹${parseFloat(product.discount).toFixed(0)}` })}
               </p>
             </div>
           ) : product.mrp && parseFloat(product.mrp) > parseFloat(product.price) ? (
             <div className="space-y-0.5 text-center">
-              <div className="flex items-center gap-2 justify-center">
-                <span className="line-through text-gray-400 text-xs font-medium">
-                  M.R.P. ₹{parseFloat(product.mrp).toFixed(2)}
+              <div className="flex items-center gap-1.5 sm:gap-2 justify-center flex-wrap">
+                <span className="line-through text-gray-400 text-[10px] sm:text-xs font-medium">
+                  ₹{parseFloat(product.mrp).toFixed(0)}
                 </span>
-                <span className="text-2xl font-black text-green-700">
-                  ₹{parseFloat(product.price).toFixed(2)}
+                <span className="text-base sm:text-2xl font-black text-green-700">
+                  ₹{parseFloat(product.price).toFixed(0)}
                 </span>
               </div>
-              <p className="text-[11px] bg-green-50 text-green-700 px-2.5 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block shadow-sm">
-                {t("savePrefix", { value: (parseFloat(product.mrp) - parseFloat(product.price)).toFixed(2), defaultValue: `Save ₹${(parseFloat(product.mrp) - parseFloat(product.price)).toFixed(2)}` })}
+              <p className="text-[9px] sm:text-[11px] bg-green-50 text-green-700 px-2 py-0.5 rounded-full font-extrabold uppercase tracking-wide inline-block shadow-2xs">
+                {t("savePrefix", { value: (parseFloat(product.mrp) - parseFloat(product.price)).toFixed(0), defaultValue: `Save ₹${(parseFloat(product.mrp) - parseFloat(product.price)).toFixed(0)}` })}
               </p>
             </div>
           ) : (
             <div className="text-center">
-              <span className="text-xs text-gray-400 block font-medium">Kirana Rate</span>
-              <span className="text-2xl font-black text-green-700">
-                ₹{parseFloat(product.price).toFixed(2)}
+              <span className="text-[10px] text-gray-400 block font-medium">Kirana Rate</span>
+              <span className="text-base sm:text-2xl font-black text-green-700">
+                ₹{parseFloat(product.price).toFixed(0)}
               </span>
             </div>
           )}
@@ -152,17 +153,17 @@ function ProductCard({ product }) {
       <button
         onClick={handleAdd}
         disabled={product.stock === 0 || adding}
-        className={`w-full mt-6 py-3 rounded-2xl font-semibold transition flex items-center justify-center gap-2
+        className={`w-full mt-3 sm:mt-5 py-2 sm:py-3 rounded-xl sm:rounded-2xl font-bold text-xs sm:text-sm transition flex items-center justify-center gap-1.5 shadow-xs
           ${added
             ? "bg-green-100 text-green-700"
             : "bg-green-600 hover:bg-green-700 text-white disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed"
           }`}
       >
         {adding ? (
-          <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+          <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
         ) : (
           <>
-            <ShoppingCart size={16} />
+            <ShoppingCart size={14} className="sm:w-4 sm:h-4" />
             {added ? t("added") : t("addToCart")}
           </>
         )}

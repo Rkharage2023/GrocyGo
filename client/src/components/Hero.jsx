@@ -7,8 +7,8 @@ function Hero() {
 
   return (
     <section className="bg-gradient-to-br from-green-50 via-white to-orange-50">
-      <div className="max-w-7xl mx-auto px-6 py-16 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-14 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 sm:py-16 lg:py-24">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-14 items-center">
           {/* Left */}
           <div>
             <span
@@ -18,11 +18,11 @@ function Hero() {
               gap-2
               bg-green-100
               text-green-700
-              px-4
-              py-2
+              px-3.5
+              py-1.5
               rounded-full
-              text-sm
-              font-medium
+              text-xs sm:text-sm
+              font-bold
               "
             >
               {t("heroBadge")}
@@ -30,24 +30,25 @@ function Hero() {
 
             <h1
               className="
-              text-5xl
+              text-3xl
+              sm:text-5xl
               lg:text-6xl
-              font-bold
+              font-extrabold
               text-gray-800
-              mt-6
+              mt-4 sm:mt-6
               leading-tight
               "
             >
               {t("heroTitle")}
-              <span className="text-green-600">{t("heroTitleWaiting")}</span>
+              <span className="text-green-600 block sm:inline">{t("heroTitleWaiting")}</span>
             </h1>
 
             <p
               className="
               text-gray-600
-              text-lg
-              mt-6
-              leading-8
+              text-sm sm:text-lg
+              mt-3 sm:mt-6
+              leading-relaxed sm:leading-8
               max-w-xl
               "
             >
@@ -55,18 +56,20 @@ function Hero() {
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-wrap gap-4 mt-8">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-6 sm:mt-8">
               <Link
                 to="/products"
                 className="
                 bg-green-600
                 text-white
-                px-8
-                py-4
+                px-6 sm:px-8
+                py-3.5 sm:py-4
                 rounded-2xl
-                font-semibold
+                font-bold
+                text-sm sm:text-base
+                text-center
                 hover:bg-green-700
-                transition
+                transition shadow-sm
                 "
               >
                 {t("shopNow")}
@@ -78,10 +81,12 @@ function Hero() {
                 border
                 border-green-600
                 text-green-700
-                px-8
-                py-4
+                px-6 sm:px-8
+                py-3.5 sm:py-4
                 rounded-2xl
-                font-semibold
+                font-bold
+                text-sm sm:text-base
+                text-center
                 hover:bg-green-50
                 transition
                 "

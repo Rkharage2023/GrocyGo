@@ -4,12 +4,18 @@ import * as offerService from "../../services/offerService";
 import * as productService from "../../services/productService";
 import API from "../../services/api";
 import CloudinaryGalleryModal from "../../components/Admin/CloudinaryGalleryModal";
+import { useToast } from "../../context/ToastContext";
+import ConfirmModal from "../../components/ConfirmModal";
 
 function AdminOffers() {
+  const toast = useToast();
   const [offers, setOffers] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Confirm Modal state
+  const [deleteConfirm, setDeleteConfirm] = useState({ isOpen: false, offerId: null });
 
   // Modals
   const [isOfferModalOpen, setIsOfferModalOpen] = useState(false);
@@ -50,7 +56,7 @@ function AdminOffers() {
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to load offers");
+      toast.error("Failed to load offers");
     } finally {
       setLoading(false);
     }
@@ -128,22 +134,22 @@ function AdminOffers() {
     e.preventDefault();
 
     if (!title.trim()) {
-      alert("Offer Title is required");
+      toast.warning("Offer Title is required");
       return;
     }
 
     if (!startDate || !endDate) {
-      alert("Start Date and End Date are required");
+      toast.warning("Start Date and End Date are required");
       return;
     }
 
     if (new Date(endDate) <= new Date(startDate)) {
-      alert("End Date must be strictly after Start Date");
+      toast.warning("End Date must be strictly after Start Date");
       return;
     }
 
     if (discountType === "PERCENTAGE" && (parseFloat(discountValue) <= 0 || parseFloat(discountValue) > 100)) {
-      alert("Percentage discount value must be between 1% and 100%");
+      toast.warning("Percentage discount value must be between 1% and 100%");
       return;
     }
 
@@ -167,33 +173,40 @@ function AdminOffers() {
       if (editingOfferId) {
         const res = await offerService.updateOffer(editingOfferId, payload);
         if (res.success) {
-          alert("Offer updated successfully!");
+          toast.success("Offer updated successfully!");
         }
       } else {
         const res = await offerService.createOffer(payload);
         if (res.success) {
-          alert("Offer created successfully!");
+          toast.success("Offer created successfully!");
         }
       }
       setIsOfferModalOpen(false);
       fetchOffers();
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to save offer");
+      toast.error(err.response?.data?.message || "Failed to save offer");
     }
   };
 
-  const handleDeleteOffer = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this offer?")) return;
+  const handleDeleteOfferPrompt = (id) => {
+    setDeleteConfirm({ isOpen: true, offerId: id });
+  };
+
+  const handleDeleteOfferConfirm = async () => {
+    const id = deleteConfirm.offerId;
+    setDeleteConfirm({ isOpen: false, offerId: null });
+    if (!id) return;
+
     try {
       const res = await offerService.deleteOffer(id);
       if (res.success) {
-        alert("Offer deleted successfully");
+        toast.success("Offer deleted successfully");
         fetchOffers();
       }
     } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Failed to delete offer");
+      toast.error(err.response?.data?.message || "Failed to delete offer");
     }
   };
 
@@ -204,11 +217,12 @@ function AdminOffers() {
         isActive: !offer.isActive,
       });
       if (res.success) {
+        toast.success(`Offer status changed to ${!offer.isActive ? "Active" : "Inactive"}`);
         fetchOffers();
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to toggle status");
+      toast.error("Failed to toggle status");
     }
   };
 
@@ -224,13 +238,13 @@ function AdminOffers() {
     try {
       const res = await offerService.assignProductsToOffer(selectedOffer.id, assignedProductIds);
       if (res.success) {
-        alert("Products mapped successfully!");
+        toast.success("Products mapped successfully!");
         setIsAssignProdModalOpen(false);
         fetchOffers();
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to assign products");
+      toast.error("Failed to assign products");
     }
   };
 
@@ -245,13 +259,13 @@ function AdminOffers() {
     try {
       const res = await offerService.assignCategoriesToOffer(selectedOffer.id, assignedCategoryIds);
       if (res.success) {
-        alert("Categories mapped successfully!");
+        toast.success("Categories mapped successfully!");
         setIsAssignCatModalOpen(false);
         fetchOffers();
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to assign categories");
+      toast.error("Failed to assign categories");
     }
   };
 
@@ -384,7 +398,7 @@ function AdminOffers() {
                           <FaEdit />
                         </button>
                         <button
-                          onClick={() => handleDeleteOffer(offer.id)}
+                          onClick={() => handleDeleteOfferPrompt(offer.id)}
                           className="text-red-500 hover:text-red-700 text-lg transition"
                           title="Delete Offer"
                         >
@@ -817,6 +831,18 @@ function AdminOffers() {
           setIsGalleryOpen(false);
         }}
         initialTab="products"
+      />
+
+      {/* Custom Delete Confirmation Modal */}
+      <ConfirmModal
+        isOpen={deleteConfirm.isOpen}
+        title="Delete Offer"
+        message="Are you sure you want to permanently delete this offer? This action cannot be undone."
+        type="danger"
+        confirmText="Yes, Delete"
+        cancelText="Cancel"
+        onConfirm={handleDeleteOfferConfirm}
+        onCancel={() => setDeleteConfirm({ isOpen: false, offerId: null })}
       />
     </div>
   );
