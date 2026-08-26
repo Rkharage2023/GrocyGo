@@ -254,7 +254,7 @@ function NotificationBell() {
       </button>
 
       {openNotifications && (
-        <div className="absolute right-0 mt-3 w-80 sm:w-96 bg-white border border-green-100 rounded-2xl shadow-2xl py-3 z-50 animate-fadeIn">
+        <div className="fixed inset-x-3 top-16 sm:top-auto sm:inset-auto sm:absolute sm:right-0 sm:mt-3 sm:w-96 max-w-full bg-white border border-green-100 rounded-2xl shadow-2xl py-3 z-50 animate-fadeIn">
           {/* Header */}
           <div className="px-4 pb-3 border-b border-gray-100 flex items-center justify-between">
             <div>

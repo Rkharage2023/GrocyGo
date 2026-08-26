@@ -738,7 +738,7 @@ function Cart() {
 
       {/* Offer Warning Modal */}
       {offerWarningMsg && (
-        <div className="fixed top-24 right-6 z-50 bg-orange-500 text-white px-6 py-4 rounded-2xl shadow-xl font-medium animate-bounce max-w-sm border border-orange-400">
+        <div className="fixed top-20 left-4 right-4 sm:left-auto sm:right-6 max-w-full sm:max-w-md z-50 bg-orange-600 text-white px-5 py-4 rounded-2xl shadow-2xl font-medium animate-slideDown border border-orange-500">
           <div className="flex items-start gap-3">
             <AlertTriangle className="w-6 h-6 shrink-0 mt-0.5" />
             <p className="text-sm whitespace-pre-wrap leading-relaxed">

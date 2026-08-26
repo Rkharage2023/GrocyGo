@@ -303,7 +303,7 @@ function Products() {
     <div className="min-h-screen bg-gray-50">
       {/* Toast */}
       {toast && (
-        <div className="fixed top-24 right-6 z-50 bg-green-600 text-white px-6 py-3 rounded-2xl shadow-lg font-semibold animate-bounce">
+        <div className="fixed top-20 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-50 bg-green-700 text-white px-5 py-3 rounded-2xl shadow-xl font-semibold text-center text-sm transition-all duration-300 animate-slideDown flex items-center justify-center gap-2 border border-green-600">
           {toast}
         </div>
       )}
